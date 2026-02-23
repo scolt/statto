@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { DeleteMatchButton } from "@/features/matches/components/delete-match-button";
 import {
   getMatchById,
   getMatchGames,
@@ -64,11 +65,13 @@ export default async function MatchPage({ params }: Props) {
             })}
           </p>
         </div>
+        <DeleteMatchButton matchId={match.id} groupId={Number(groupId)} />
       </div>
 
       {/* Timer */}
       <MatchTimer
         startedAt={match.startedAt?.toISOString() ?? null}
+        finishedAt={match.finishedAt?.toISOString() ?? null}
         status={match.status}
       />
 

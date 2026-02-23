@@ -43,7 +43,7 @@ export async function completeMatch(matchId: number): Promise<void> {
 
   await db
     .update(matchesTable)
-    .set({ status: "done" })
+    .set({ status: "done", finishedAt: new Date() })
     .where(eq(matchesTable.id, matchId));
 }
 
@@ -55,7 +55,7 @@ export async function uncompleteMatch(matchId: number): Promise<void> {
 
   await db
     .update(matchesTable)
-    .set({ status: "in_progress" })
+    .set({ status: "in_progress", finishedAt: null })
     .where(eq(matchesTable.id, matchId));
 }
 

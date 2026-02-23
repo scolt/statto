@@ -17,6 +17,7 @@ export type MatchDetail = {
   groupId: number;
   date: Date;
   startedAt: Date | null;
+  finishedAt: Date | null;
   status: MatchStatus;
   comment: string | null;
 };
@@ -35,6 +36,7 @@ export async function getMatchById(matchId: number): Promise<MatchDetail | null>
       groupId: matchesTable.groupId,
       date: matchesTable.date,
       startedAt: matchesTable.startedAt,
+      finishedAt: matchesTable.finishedAt,
       status: matchesTable.status,
       comment: matchesTable.comment,
     })

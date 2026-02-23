@@ -5,35 +5,45 @@ import { Timer, CheckCircle, Clock } from "lucide-react";
 import type { MatchStatus } from "@/features/matches";
 
 type Props = {
-  startedAt: string | null; // ISO string or null
+  startedAt: string | null;
+  finishedAt: string | null;
   status: MatchStatus;
 };
 
 function formatElapsed(seconds: number): string {
-  const mins = Math.floor(seconds / 60);
+  const hrs = Math.floor(seconds / 3600);
+  const mins = Math.floor((seconds % 3600) / 60);
   const secs = seconds % 60;
+
+  if (hrs > 0) {
+    return `${String(hrs).padStart(2, "0")}:${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+  }
   return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
 }
 
-export function MatchTimer({ startedAt, status }: Props) {
+function computeElapsed(startedAt: string, finishedAt: string | null): number {
+  const start = new Date(startedAt).getTime();
+  const end = finishedAt ? new Date(finishedAt).getTime() : Date.now();
+  return Math.floor((end - start) / 1000);
+}
+
+export function MatchTimer({ startedAt, finishedAt, status }: Props) {
   const [elapsed, setElapsed] = useState(0);
 
   useEffect(() => {
     if (!startedAt) return;
 
-    const start = new Date(startedAt).getTime();
+    setElapsed(computeElapsed(startedAt, finishedAt));
 
-    function tick() {
-      setElapsed(Math.floor((Date.now() - start) / 1000));
-    }
-
-    tick();
-
+    // Only tick if match is in progress (no finishedAt yet)
     if (status !== "in_progress") return;
 
-    const interval = setInterval(tick, 1000);
+    const interval = setInterval(() => {
+      setElapsed(computeElapsed(startedAt, null));
+    }, 1000);
+
     return () => clearInterval(interval);
-  }, [startedAt, status]);
+  }, [startedAt, finishedAt, status]);
 
   const icon =
     status === "done" ? (

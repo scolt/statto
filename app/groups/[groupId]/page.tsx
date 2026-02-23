@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { getGroupById } from "@/features/groups";
 import { StartMatchButton } from "@/features/matches/components/start-match-button";
 import { MatchList } from "@/features/matches/components/match-list";
+import { DeleteGroupButton } from "@/features/groups/components/delete-group-button";
+import { StatsLeaderboard } from "@/features/groups/components/stats-leaderboard";
 
 type Props = {
   params: Promise<{ groupId: string }>;
@@ -38,8 +40,15 @@ export default async function GroupPage({ params }: Props) {
             <Pencil className="size-4" />
           </Link>
         </Button>
+        <DeleteGroupButton groupId={group.id} />
       </div>
 
+      {/* Player Stats Leaderboard */}
+      <div className="mb-8">
+        <StatsLeaderboard groupId={group.id} />
+      </div>
+
+      {/* Matches */}
       <section className="space-y-4">
         <div className="flex items-center gap-3">
           <h2 className="text-xl font-semibold">Matches</h2>

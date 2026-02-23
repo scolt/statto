@@ -8,6 +8,7 @@ export const matchesTable = mysqlTable('matches', {
     .references(() => groupsTable.id, { onDelete: 'cascade' }),
   date: timestamp('date').notNull(),
   startedAt: timestamp('started_at'),
+  finishedAt: timestamp('finished_at'),
   status: mysqlEnum('status', ['new', 'in_progress', 'done'])
     .notNull()
     .default('new'),

@@ -15,6 +15,13 @@
       "when": 1771853519088,
       "tag": "0001_ancient_titanium_man",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1771858038087,
+      "tag": "0002_outstanding_maddog",
+      "breakpoints": true
     }
   ]
 }
