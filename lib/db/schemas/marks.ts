@@ -1,10 +1,8 @@
 import { mysqlTable, serial, timestamp, varchar } from 'drizzle-orm/mysql-core';
 
-export const usersTable = mysqlTable('users', {
+export const marksTable = mysqlTable('marks', {
   id: serial().primaryKey(),
-  name: varchar({ length: 255 }).notNull(),
-  provider: varchar({ length: 255 }),
-  externalId: varchar('externalId', { length: 255 }),
+  name: varchar({ length: 100 }).notNull().unique(),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow().onUpdateNow(),
 });

@@ -17,64 +17,71 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-import { createGroup } from "../actions/create-group";
+import { updateGroup } from "../actions/update-group";
 import { PlayerSearchField } from "./player-search-field";
 import type { PlayerSearchResult } from "@/features/players";
 
-type CreateGroupFormValues = {
+type EditGroupFormValues = {
   name: string;
   description: string;
 };
 
-export function CreateGroupForm() {
+type Props = {
+  groupId: number;
+  initialName: string;
+  initialDescription: string;
+  initialPlayers: PlayerSearchResult[];
+};
+
+export function EditGroupForm({
+  groupId,
+  initialName,
+  initialDescription,
+  initialPlayers,
+}: Props) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState<string | undefined>();
+  const [selectedPlayers, setSelectedPlayers] =
+    useState<PlayerSearchResult[]>(initialPlayers);
 
-  const form = useForm<CreateGroupFormValues>({
+  const form = useForm<EditGroupFormValues>({
     defaultValues: {
-      name: "",
-      description: "",
+      name: initialName,
+      description: initialDescription,
     },
   });
 
-  const [selectedPlayers, setSelectedPlayers] = useState<PlayerSearchResult[]>([]);
-  
   const addPlayer = useCallback((player: PlayerSearchResult) => {
     setSelectedPlayers((prev) => [...prev, player]);
   }, []);
-  
+
   const removePlayer = useCallback((playerId: number) => {
     setSelectedPlayers((prev) => prev.filter((p) => p.id !== playerId));
   }, []);
 
-  function onSubmit(values: CreateGroupFormValues) {
+  function onSubmit(values: EditGroupFormValues) {
     setServerError(undefined);
 
-    const formData = new FormData();
-    formData.set("name", values.name);
-    formData.set("description", values.description);
-    formData.set(
-      "playerIds",
-      JSON.stringify(selectedPlayers.map((p) => p.id))
-    );
-
     startTransition(async () => {
-      const result = await createGroup({}, formData);
-      if (result?.error) {
+      const result = await updateGroup(groupId, {
+        name: values.name,
+        description: values.description,
+        playerIds: selectedPlayers.map((p) => p.id),
+      });
+
+      if (result.error) {
         setServerError(result.error);
+      } else {
+        router.push(`/groups/${groupId}`);
+        router.refresh();
       }
-      // On success the server action redirects
     });
   }
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="max-w-lg space-y-6"
-      >
-        {/* Name */}
+      <form onSubmit={form.handleSubmit(onSubmit)} className="max-w-lg space-y-6">
         <FormField
           control={form.control}
           name="name"
@@ -85,17 +92,13 @@ export function CreateGroupForm() {
                 Group Name <span className="text-destructive">*</span>
               </FormLabel>
               <FormControl>
-                <Input
-                  placeholder="e.g. Friday Night Football"
-                  {...field}
-                />
+                <Input placeholder="e.g. Friday Night Football" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        {/* Description */}
         <FormField
           control={form.control}
           name="description"
@@ -121,21 +124,19 @@ export function CreateGroupForm() {
           onRemove={removePlayer}
         />
 
-        {/* Server error */}
         {serverError && (
           <p className="text-destructive text-sm font-medium">{serverError}</p>
         )}
 
-        {/* Actions */}
         <div className="flex gap-3">
           <Button type="submit" disabled={isPending}>
             {isPending && <Loader2 className="animate-spin" />}
-            {isPending ? "Creating…" : "Create Group"}
+            {isPending ? "Saving…" : "Save Changes"}
           </Button>
           <Button
             type="button"
             variant="outline"
-            onClick={() => router.push("/")}
+            onClick={() => router.push(`/groups/${groupId}`)}
           >
             Cancel
           </Button>
