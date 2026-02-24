@@ -11,6 +11,3 @@ export type { MatchDetail, MatchStatus, GameWithDetails } from "./queries/get-ma
 
 export { getMatchesForGroup } from "./queries/get-matches-for-group";
 export type { MatchListItem, PlayerMatchResult } from "./queries/get-matches-for-group";
-
-export { getMatchIdsByGroupId, getGameIdsByMatchId, getScoresByGameIds } from "./queries/get-match-scores";
-export type { GameScore } from "./queries/get-match-scores";

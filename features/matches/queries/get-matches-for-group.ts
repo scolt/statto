@@ -2,7 +2,7 @@
 
 import {
   findMatchesByGroupId,
-  findGameIdsByMatchId,
+  findGameIdsByMatchIds,
   findScoresByGameIds,
 } from "../repository/matches.repository";
 
@@ -23,32 +23,37 @@ export type MatchListItem = {
   playerResults: PlayerMatchResult[];
 };
 
+/**
+ * Fetches all matches for a group with computed player results.
+ * Uses batch queries: 1 for matches + 1 for all games + 1 for all scores
+ * instead of 2*N sequential queries.
+ */
 export async function getMatchesForGroup(
   groupId: number
 ): Promise<MatchListItem[]> {
   const matches = await findMatchesByGroupId(groupId);
+  if (matches.length === 0) return [];
 
-  const result: MatchListItem[] = [];
+  const matchIds = matches.map((m) => m.id);
 
-  for (const match of matches) {
-    const playerResults = await computePlayerResults(match.id);
-    result.push({ ...match, playerResults });
+  // Batch: get all games for all matches in one query
+  const allGames = await findGameIdsByMatchIds(matchIds);
+
+  // Batch: get all scores for all games in one query
+  const allGameIds = allGames.map((g) => g.id);
+  const allScores = allGameIds.length > 0
+    ? await findScoresByGameIds(allGameIds)
+    : [];
+
+  // Group games by matchId
+  const gamesByMatch = new Map<number, { id: number }[]>();
+  for (const g of allGames) {
+    const arr = gamesByMatch.get(g.matchId) ?? [];
+    arr.push({ id: g.id });
+    gamesByMatch.set(g.matchId, arr);
   }
 
-  return result;
-}
-
-async function computePlayerResults(
-  matchId: number
-): Promise<PlayerMatchResult[]> {
-  const games = await findGameIdsByMatchId(matchId);
-
-  if (games.length === 0) return [];
-
-  const gameIds = games.map((g) => g.id);
-  const allScores = await findScoresByGameIds(gameIds);
-
-  // Group scores by game
+  // Group scores by gameId
   const scoresByGame = new Map<number, typeof allScores>();
   for (const s of allScores) {
     const arr = scoresByGame.get(s.gameId) ?? [];
@@ -56,18 +61,33 @@ async function computePlayerResults(
     scoresByGame.set(s.gameId, arr);
   }
 
+  return matches.map((match) => {
+    const matchGames = gamesByMatch.get(match.id) ?? [];
+    const playerResults = computePlayerResults(matchGames, scoresByGame);
+    return { ...match, playerResults };
+  });
+}
+
+function computePlayerResults(
+  games: { id: number }[],
+  scoresByGame: Map<number, { gameId: number; playerId: number; playerName: string; score: number }[]>
+): PlayerMatchResult[] {
+  if (games.length === 0) return [];
+
   // Count wins per player
   const winsMap = new Map<number, { nickname: string; wins: number }>();
 
-  // Ensure all players appear even with 0 wins
-  for (const s of allScores) {
-    if (!winsMap.has(s.playerId)) {
-      winsMap.set(s.playerId, { nickname: s.playerName, wins: 0 });
-    }
-  }
-
-  for (const [, scores] of scoresByGame) {
+  for (const game of games) {
+    const scores = scoresByGame.get(game.id) ?? [];
     if (scores.length < 2) continue;
+
+    // Ensure all players appear even with 0 wins
+    for (const s of scores) {
+      if (!winsMap.has(s.playerId)) {
+        winsMap.set(s.playerId, { nickname: s.playerName, wins: 0 });
+      }
+    }
+
     const maxScore = Math.max(...scores.map((s) => s.score));
     const winners = scores.filter((s) => s.score === maxScore);
 

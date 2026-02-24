@@ -1,10 +1,10 @@
 "use server";
 
 import {
-  getMatchIdsByGroupId,
-  getGameIdsByMatchId,
-  getScoresByGameIds,
-} from "@/features/matches";
+  findMatchIdsByGroupId,
+  findGameIdsByMatchIds,
+  findScoresByGameIds,
+} from "@/features/matches/repository/matches.repository";
 
 export type PlayerStats = {
   playerId: number;
@@ -15,17 +15,48 @@ export type PlayerStats = {
   totalPoints: number;
 };
 
+/**
+ * Computes aggregated player stats for a group.
+ * Uses batch queries: 1 for match IDs + 1 for all game IDs + 1 for all scores
+ * instead of N+1 sequential queries per match.
+ */
 export async function getGroupPlayerStats(
   groupId: number
 ): Promise<PlayerStats[]> {
-  const matches = await getMatchIdsByGroupId(groupId);
-
+  const matches = await findMatchIdsByGroupId(groupId);
   if (matches.length === 0) return [];
+
+  const matchIds = matches.map((m) => m.id);
+
+  // Batch: get all games for all matches in one query
+  const allGames = await findGameIdsByMatchIds(matchIds);
+  if (allGames.length === 0) return [];
+
+  // Batch: get all scores for all games in one query
+  const allGameIds = allGames.map((g) => g.id);
+  const allScores = await findScoresByGameIds(allGameIds);
+
+  // Group games by matchId
+  const gamesByMatch = new Map<number, { id: number }[]>();
+  for (const g of allGames) {
+    const arr = gamesByMatch.get(g.matchId) ?? [];
+    arr.push({ id: g.id });
+    gamesByMatch.set(g.matchId, arr);
+  }
+
+  // Group scores by gameId
+  const scoresByGame = new Map<number, typeof allScores>();
+  for (const s of allScores) {
+    const arr = scoresByGame.get(s.gameId) ?? [];
+    arr.push(s);
+    scoresByGame.set(s.gameId, arr);
+  }
 
   const statsMap = new Map<number, PlayerStats>();
 
   for (const match of matches) {
-    const matchResults = await computeMatchPlayerData(match.id);
+    const matchGames = gamesByMatch.get(match.id) ?? [];
+    const matchResults = computeMatchPlayerData(matchGames, scoresByGame);
     if (matchResults.length === 0) continue;
 
     // Determine match winner(s) — draws count for all tied players
@@ -77,41 +108,29 @@ type MatchPlayerData = {
   totalPoints: number;
 };
 
-async function computeMatchPlayerData(
-  matchId: number
-): Promise<MatchPlayerData[]> {
-  const games = await getGameIdsByMatchId(matchId);
-
+function computeMatchPlayerData(
+  games: { id: number }[],
+  scoresByGame: Map<number, { gameId: number; playerId: number; playerName: string; score: number }[]>
+): MatchPlayerData[] {
   if (games.length === 0) return [];
 
-  const gameIds = games.map((g) => g.id);
-  const allScores = await getScoresByGameIds(gameIds);
-
-  // Group scores by game
-  const scoresByGame = new Map<number, typeof allScores>();
-  for (const s of allScores) {
-    const arr = scoresByGame.get(s.gameId) ?? [];
-    arr.push(s);
-    scoresByGame.set(s.gameId, arr);
-  }
-
-  // Aggregate per player
   const playerMap = new Map<number, MatchPlayerData>();
 
-  for (const s of allScores) {
-    if (!playerMap.has(s.playerId)) {
-      playerMap.set(s.playerId, {
-        playerId: s.playerId,
-        nickname: s.playerName,
-        gameWins: 0,
-        totalGames: 0,
-        totalPoints: 0,
-      });
-    }
-  }
-
-  for (const [, scores] of scoresByGame) {
+  for (const game of games) {
+    const scores = scoresByGame.get(game.id) ?? [];
     if (scores.length < 2) continue;
+
+    for (const s of scores) {
+      if (!playerMap.has(s.playerId)) {
+        playerMap.set(s.playerId, {
+          playerId: s.playerId,
+          nickname: s.playerName,
+          gameWins: 0,
+          totalGames: 0,
+          totalPoints: 0,
+        });
+      }
+    }
 
     const maxScore = Math.max(...scores.map((s) => s.score));
     const winners = scores.filter((s) => s.score === maxScore);

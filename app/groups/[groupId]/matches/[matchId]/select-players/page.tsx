@@ -16,11 +16,15 @@ export default async function SelectPlayersPage({ params }: Props) {
   if (!session) redirect("/auth/login");
 
   const { groupId, matchId } = await params;
-  const group = await getGroupById(Number(groupId));
-  const match = await getMatchById(Number(matchId));
-
+  
+  // Parallel: fetch group and match at the same time
+  const [group, match] = await Promise.all([
+    getGroupById(Number(groupId)),
+    getMatchById(Number(matchId)),
+  ]);
+  
   if (!group || !match) notFound();
-
+  
   const members = await getGroupMembers(group.id);
 
   return (

@@ -120,3 +120,41 @@ export async function updatePlayerNickname(
     .set({ nickname })
     .where(eq(playersTable.id, playerId));
 }
+
+/**
+ * Single-join query: get player nickname by external ID (replaces 2 sequential queries).
+ */
+export async function findPlayerNicknameByExternalId(
+  externalId: string
+): Promise<string | null> {
+  const rows = await db
+    .select({ nickname: playersTable.nickname })
+    .from(playersTable)
+    .innerJoin(usersTable, eq(playersTable.userId, usersTable.id))
+    .where(eq(usersTable.externalId, externalId))
+    .limit(1);
+
+  return rows[0]?.nickname ?? null;
+}
+
+/**
+ * Single-join query: get full profile by external ID (replaces 2 sequential queries).
+ */
+export async function findFullProfileByExternalId(externalId: string) {
+  const rows = await db
+    .select({
+      userId: usersTable.id,
+      playerId: playersTable.id,
+      name: usersTable.name,
+      nickname: playersTable.nickname,
+      provider: usersTable.provider,
+      createdAt: usersTable.createdAt,
+      favouriteSports: playersTable.favouriteSports,
+    })
+    .from(usersTable)
+    .innerJoin(playersTable, eq(playersTable.userId, usersTable.id))
+    .where(eq(usersTable.externalId, externalId))
+    .limit(1);
+
+  return rows[0] ?? null;
+}

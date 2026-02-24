@@ -1,9 +1,6 @@
 "use server";
 
-import {
-  findFullUserByExternalId,
-  findFullPlayerByUserId,
-} from "../repository/players.repository";
+import { findFullProfileByExternalId } from "../repository/players.repository";
 
 export type UserProfile = {
   userId: number;
@@ -15,24 +12,25 @@ export type UserProfile = {
   favouriteSports: string[];
 };
 
+/**
+ * Gets the full user profile by Auth0 external ID.
+ * Uses a single JOIN query instead of 2 sequential lookups.
+ */
 export async function getProfile(
   externalId: string
 ): Promise<UserProfile | null> {
-  const user = await findFullUserByExternalId(externalId);
-  if (!user) return null;
-
-  const player = await findFullPlayerByUserId(user.id);
-  if (!player) return null;
+  const row = await findFullProfileByExternalId(externalId);
+  if (!row) return null;
 
   return {
-    userId: user.id,
-    playerId: player.id,
-    name: user.name,
-    nickname: player.nickname,
-    provider: user.provider,
-    createdAt: user.createdAt,
-    favouriteSports: player.favouriteSports
-      ? JSON.parse(player.favouriteSports)
+    userId: row.userId,
+    playerId: row.playerId,
+    name: row.name,
+    nickname: row.nickname,
+    provider: row.provider,
+    createdAt: row.createdAt,
+    favouriteSports: row.favouriteSports
+      ? JSON.parse(row.favouriteSports)
       : [],
   };
 }

@@ -33,7 +33,8 @@ export default async function MatchPage({ params }: Props) {
   const { groupId, matchId } = await params;
   const match = await getMatchById(Number(matchId));
   if (!match) notFound();
-
+  
+  // Parallel: fetch games, players, and marks at the same time
   const [games, players, marks] = await Promise.all([
     getMatchGames(match.id),
     getMatchPlayers(match.id),

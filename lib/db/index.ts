@@ -9,7 +9,14 @@ const globalForDb = globalThis as unknown as {
 // Reuse existing pool across hot reloads in development
 const poolConnection =
   globalForDb.poolConnection ??
-  mysql.createPool(process.env.MYSQL_PUBLIC_URL as string);
+  mysql.createPool({
+    uri: process.env.MYSQL_PUBLIC_URL as string,
+    connectionLimit: 5,
+    maxIdle: 2,
+    idleTimeout: 60000, // close idle connections after 60s
+    enableKeepAlive: true,
+    keepAliveInitialDelay: 10000,
+  });
 
 if (process.env.NODE_ENV !== 'production') {
   globalForDb.poolConnection = poolConnection;

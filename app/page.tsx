@@ -42,8 +42,12 @@ export default async function Home() {
 
   const user = session.user;
   const fallbackName = user.name || user.email || "Player";
-  const playerName = await getPlayerDisplayName(user.sub, fallbackName);
-  const groups = await getGroupsForUser(user.sub);
+  
+  // Parallel: fetch player name and groups at the same time
+  const [playerName, groups] = await Promise.all([
+    getPlayerDisplayName(user.sub, fallbackName),
+    getGroupsForUser(user.sub),
+  ]);
 
   return (
     <main className="flex flex-1 flex-col">

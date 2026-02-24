@@ -6,7 +6,7 @@ import { gameScoresTable } from "@/lib/db/schemas/game-scores";
 import { gameMarksTable } from "@/lib/db/schemas/game-marks";
 import { playersTable } from "@/lib/db/schemas/players";
 import { marksTable } from "@/lib/db/schemas/marks";
-import { eq, desc, inArray } from "drizzle-orm";
+import { eq, desc, inArray, sql } from "drizzle-orm";
 
 // --- Match CRUD ---
 
@@ -139,6 +139,7 @@ export async function findGamesByMatchId(matchId: number) {
 }
 
 export async function findScoresByGameIds(gameIds: number[]) {
+  if (gameIds.length === 0) return [];
   return db
     .select({
       gameId: gameScoresTable.gameId,
@@ -172,6 +173,52 @@ export async function findMarksByGameId(gameId: number) {
     .from(gameMarksTable)
     .innerJoin(marksTable, eq(gameMarksTable.markId, marksTable.id))
     .where(eq(gameMarksTable.gameId, gameId));
+}
+
+/**
+ * Batch: find marks for multiple games at once (eliminates N+1).
+ */
+export async function findMarksByGameIds(gameIds: number[]) {
+  if (gameIds.length === 0) return [];
+  return db
+    .select({
+      gameId: gameMarksTable.gameId,
+      id: marksTable.id,
+      name: marksTable.name,
+    })
+    .from(gameMarksTable)
+    .innerJoin(marksTable, eq(gameMarksTable.markId, marksTable.id))
+    .where(inArray(gameMarksTable.gameId, gameIds));
+}
+
+/**
+ * Batch: find all game IDs for multiple matches at once (eliminates N+1).
+ */
+export async function findGameIdsByMatchIds(matchIds: number[]) {
+  if (matchIds.length === 0) return [];
+  return db
+    .select({
+      id: gamesTable.id,
+      matchId: gamesTable.matchId,
+    })
+    .from(gamesTable)
+    .where(inArray(gamesTable.matchId, matchIds));
+}
+
+/**
+ * Batch: find all games (with comments) for multiple matches at once.
+ */
+export async function findGamesByMatchIds(matchIds: number[]) {
+  if (matchIds.length === 0) return [];
+  return db
+    .select({
+      id: gamesTable.id,
+      matchId: gamesTable.matchId,
+      comment: gamesTable.comment,
+    })
+    .from(gamesTable)
+    .where(inArray(gamesTable.matchId, matchIds))
+    .orderBy(gamesTable.createdAt);
 }
 
 export async function insertGame(
