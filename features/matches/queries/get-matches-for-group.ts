@@ -93,6 +93,6 @@ async function computePlayerResults(
     playerId: p.playerId,
     nickname: p.nickname,
     wins: p.wins,
-    isWinner: hasWinner && idx === 0,
+    isWinner: idx === 0 || !hasWinner,
   }));
 }
