@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, LogOut } from "lucide-react";
 import { getCurrentUser } from "@/lib/auth0";
-import { ensureUserAndPlayer } from "@/lib/auth/user-management";
+import { getProfile, EditProfileForm } from "@/features/players";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -20,9 +20,9 @@ export default async function ProfilePage() {
     redirect("/auth/login");
   }
 
-  const result = await ensureUserAndPlayer(auth0User);
+  const profile = await getProfile(auth0User.sub);
 
-  if (!result) {
+  if (!profile) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <p className="text-destructive">
@@ -31,11 +31,6 @@ export default async function ProfilePage() {
       </div>
     );
   }
-
-  const { user, player } = result;
-  const favouriteSports: string[] = player.favouriteSports
-    ? JSON.parse(player.favouriteSports)
-    : [];
 
   return (
     <div className="bg-muted/40 flex min-h-screen items-center justify-center">
@@ -53,26 +48,15 @@ export default async function ProfilePage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-muted-foreground text-sm uppercase tracking-wide">
-              Account
+              Edit Profile
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Name</span>
-              <span className="font-medium">{user.name}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Provider</span>
-              <span className="font-medium">{user.provider}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Member since</span>
-              <span className="font-medium">
-                {user.createdAt
-                  ? new Date(user.createdAt).toLocaleDateString()
-                  : "—"}
-              </span>
-            </div>
+          <CardContent>
+            <EditProfileForm
+              playerId={profile.playerId}
+              initialName={profile.name}
+              initialNickname={profile.nickname}
+            />
           </CardContent>
 
           <div className="px-6">
@@ -81,31 +65,45 @@ export default async function ProfilePage() {
 
           <CardHeader>
             <CardTitle className="text-muted-foreground text-sm uppercase tracking-wide">
-              Player
+              Account Info
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Nickname</span>
-              <span className="font-medium">{player.nickname}</span>
+              <span className="text-muted-foreground">Provider</span>
+              <span className="font-medium">{profile.provider ?? "—"}</span>
             </div>
-            <div>
-              <span className="text-muted-foreground">Favourite Sports</span>
-              {favouriteSports.length > 0 ? (
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {favouriteSports.map((sport: string) => (
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Member since</span>
+              <span className="font-medium">
+                {profile.createdAt
+                  ? new Date(profile.createdAt).toLocaleDateString()
+                  : "—"}
+              </span>
+            </div>
+          </CardContent>
+
+          {profile.favouriteSports.length > 0 && (
+            <>
+              <div className="px-6">
+                <Separator />
+              </div>
+              <CardHeader>
+                <CardTitle className="text-muted-foreground text-sm uppercase tracking-wide">
+                  Favourite Sports
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-wrap gap-2">
+                  {profile.favouriteSports.map((sport: string) => (
                     <Badge key={sport} variant="secondary">
                       {sport}
                     </Badge>
                   ))}
                 </div>
-              ) : (
-                <p className="text-muted-foreground mt-1 text-sm">
-                  No favourite sports added yet
-                </p>
-              )}
-            </div>
-          </CardContent>
+              </CardContent>
+            </>
+          )}
         </Card>
 
         <div className="mt-6 text-center">

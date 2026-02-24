@@ -1,13 +1,13 @@
 "use server";
 
-import { db } from "@/lib/db";
-import { groupsTable } from "@/lib/db/schemas/groups";
-import { playersGroupsTable } from "@/lib/db/schemas/players-groups";
-import { playersTable } from "@/lib/db/schemas/players";
-import { usersTable } from "@/lib/db/schemas/users";
-import { eq } from "drizzle-orm";
 import { auth0 } from "@/lib/auth0";
 import { redirect } from "next/navigation";
+import {
+  insertGroup,
+  insertGroupMembers,
+  findUserIdByExternalId,
+  findPlayerIdByUserId,
+} from "../repository/groups.repository";
 
 export type CreateGroupState = {
   error?: string;
@@ -32,27 +32,15 @@ export async function createGroup(
   }
 
   // Find the current player
-  const currentUser = await db
-    .select({ id: usersTable.id })
-    .from(usersTable)
-    .where(eq(usersTable.externalId, session.user.sub))
-    .limit(1);
-
-  if (currentUser.length === 0) {
+  const userId = await findUserIdByExternalId(session.user.sub);
+  if (!userId) {
     return { error: "User not found. Please log in again." };
   }
 
-  const currentPlayer = await db
-    .select({ id: playersTable.id })
-    .from(playersTable)
-    .where(eq(playersTable.userId, currentUser[0].id))
-    .limit(1);
-
-  if (currentPlayer.length === 0) {
+  const currentPlayerId = await findPlayerIdByUserId(userId);
+  if (!currentPlayerId) {
     return { error: "Player profile not found." };
   }
-
-  const currentPlayerId = currentPlayer[0].id;
 
   // Parse selected player IDs
   let memberPlayerIds: number[] = [];
@@ -70,21 +58,14 @@ export async function createGroup(
   }
 
   // Create the group
-  const [result] = await db.insert(groupsTable).values({
+  const groupId = await insertGroup({
     name: name.trim(),
     description: description?.trim() || null,
   });
 
-  const groupId = result.insertId;
-
   // Add all members to the group
   if (memberPlayerIds.length > 0) {
-    await db.insert(playersGroupsTable).values(
-      memberPlayerIds.map((playerId) => ({
-        playerId,
-        groupId,
-      }))
-    );
+    await insertGroupMembers(groupId, memberPlayerIds);
   }
 
   redirect("/");

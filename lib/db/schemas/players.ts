@@ -4,7 +4,7 @@ import { usersTable } from './users';
 export const playersTable = mysqlTable('players', {
   id: serial().primaryKey(),
   userId: bigint('userId', { mode: 'number', unsigned: true }).notNull().references(() => usersTable.id).unique(), // 1:1 relationship with users table, must match serial() type
-  nickname: varchar('nickname', { length: 100 }).notNull(),
+  nickname: varchar('nickname', { length: 100 }).notNull().unique(),
   favouriteSports: text('favouriteSports'), // Stored as a JSON string of sports array
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow().onUpdateNow(),

@@ -1,10 +1,8 @@
 "use server";
 
-import { db } from "@/lib/db";
-import { groupsTable } from "@/lib/db/schemas/groups";
-import { eq } from "drizzle-orm";
 import { auth0 } from "@/lib/auth0";
 import { redirect } from "next/navigation";
+import { deleteGroupById } from "../repository/groups.repository";
 
 export async function deleteGroup(groupId: number): Promise<void> {
   const session = await auth0.getSession();
@@ -12,5 +10,5 @@ export async function deleteGroup(groupId: number): Promise<void> {
     redirect("/auth/login");
   }
 
-  await db.delete(groupsTable).where(eq(groupsTable.id, groupId));
+  await deleteGroupById(groupId);
 }

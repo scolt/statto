@@ -4,10 +4,10 @@ import Link from "next/link";
 import { ArrowLeft, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getGroupById } from "@/features/groups";
-import { StartMatchButton } from "@/features/matches/components/start-match-button";
-import { MatchList } from "@/features/matches/components/match-list";
-import { DeleteGroupButton } from "@/features/groups/components/delete-group-button";
-import { StatsLeaderboard } from "@/features/groups/components/stats-leaderboard";
+import { StartMatchButton } from "@/features/matches/components/StartMatchButton";
+import { MatchList } from "@/features/matches/components/MatchList";
+import { DeleteGroupButton } from "@/features/groups/components/DeleteGroupButton";
+import { StatsLeaderboard } from "@/features/groups/components/StatsLeaderboard";
 
 type Props = {
   params: Promise<{ groupId: string }>;

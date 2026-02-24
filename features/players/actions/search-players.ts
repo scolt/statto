@@ -1,9 +1,6 @@
 "use server";
 
-import { db } from "@/lib/db";
-import { playersTable } from "@/lib/db/schemas/players";
-import { usersTable } from "@/lib/db/schemas/users";
-import { like, or, eq } from "drizzle-orm";
+import { searchPlayersByQuery } from "../repository/players.repository";
 
 export type PlayerSearchResult = {
   id: number;
@@ -19,22 +16,5 @@ export async function searchPlayers(
   }
 
   const pattern = `%${query.trim()}%`;
-
-  const results = await db
-    .select({
-      id: playersTable.id,
-      nickname: playersTable.nickname,
-      username: usersTable.name,
-    })
-    .from(playersTable)
-    .innerJoin(usersTable, eq(playersTable.userId, usersTable.id))
-    .where(
-      or(
-        like(usersTable.name, pattern),
-        like(playersTable.nickname, pattern)
-      )
-    )
-    .limit(10);
-
-  return results;
+  return searchPlayersByQuery(pattern, 10);
 }

@@ -1,9 +1,9 @@
-export { GroupList } from "./components/group-list";
-export { CreateGroupForm } from "./components/create-group-form";
-export { EditGroupForm } from "./components/edit-group-form";
-export { CreateGroupButton } from "./components/create-group-button";
-export { DeleteGroupButton } from "./components/delete-group-button";
-export { StatsLeaderboard } from "./components/stats-leaderboard";
+export { GroupList } from "./components/GroupList";
+export { CreateGroupForm } from "./components/CreateGroupForm";
+export { EditGroupForm } from "./components/EditGroupForm";
+export { CreateGroupButton } from "./components/CreateGroupButton";
+export { DeleteGroupButton } from "./components/DeleteGroupButton";
+export { StatsLeaderboard } from "./components/StatsLeaderboard";
 export { getGroupsForUser, type GroupCard } from "./queries/get-groups-for-user";
 export { getGroupById, getGroupMembers, getGroupMembersWithUsername } from "./queries/get-group-detail";
 export type { GroupDetail, GroupMember, GroupMemberWithUsername } from "./queries/get-group-detail";

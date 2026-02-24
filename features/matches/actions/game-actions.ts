@@ -1,10 +1,11 @@
 "use server";
 
-import { db } from "@/lib/db";
-import { gamesTable } from "@/lib/db/schemas/games";
-import { gameScoresTable } from "@/lib/db/schemas/game-scores";
-import { gameMarksTable } from "@/lib/db/schemas/game-marks";
-import { marksTable } from "@/lib/db/schemas/marks";
+import {
+  findAllMarks,
+  insertGame,
+  insertGameScores,
+  insertGameMarks,
+} from "../repository/matches.repository";
 
 export type Mark = {
   id: number;
@@ -12,13 +13,7 @@ export type Mark = {
 };
 
 export async function getAllMarks(): Promise<Mark[]> {
-  return db
-    .select({
-      id: marksTable.id,
-      name: marksTable.name,
-    })
-    .from(marksTable)
-    .orderBy(marksTable.name);
+  return findAllMarks();
 }
 
 export type ReportGameInput = {
@@ -29,32 +24,14 @@ export type ReportGameInput = {
 };
 
 export async function reportGame(input: ReportGameInput): Promise<number> {
-  const [result] = await db.insert(gamesTable).values({
-    matchId: input.matchId,
-    comment: input.comment || null,
-  });
+  const gameId = await insertGame(input.matchId, input.comment || null);
 
-  const gameId = result.insertId;
-
-  // Insert scores
   if (input.scores.length > 0) {
-    await db.insert(gameScoresTable).values(
-      input.scores.map((s) => ({
-        gameId,
-        playerId: s.playerId,
-        score: s.score,
-      }))
-    );
+    await insertGameScores(gameId, input.scores);
   }
 
-  // Insert marks
   if (input.markIds.length > 0) {
-    await db.insert(gameMarksTable).values(
-      input.markIds.map((markId) => ({
-        gameId,
-        markId,
-      }))
-    );
+    await insertGameMarks(gameId, input.markIds);
   }
 
   return gameId;

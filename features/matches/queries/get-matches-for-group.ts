@@ -1,11 +1,10 @@
 "use server";
 
-import { db } from "@/lib/db";
-import { matchesTable } from "@/lib/db/schemas/matches";
-import { gamesTable } from "@/lib/db/schemas/games";
-import { gameScoresTable } from "@/lib/db/schemas/game-scores";
-import { playersTable } from "@/lib/db/schemas/players";
-import { eq, desc, inArray } from "drizzle-orm";
+import {
+  findMatchesByGroupId,
+  findGameIdsByMatchId,
+  findScoresByGameIds,
+} from "../repository/matches.repository";
 
 export type PlayerMatchResult = {
   playerId: number;
@@ -27,18 +26,7 @@ export type MatchListItem = {
 export async function getMatchesForGroup(
   groupId: number
 ): Promise<MatchListItem[]> {
-  const matches = await db
-    .select({
-      id: matchesTable.id,
-      date: matchesTable.date,
-      startedAt: matchesTable.startedAt,
-      finishedAt: matchesTable.finishedAt,
-      status: matchesTable.status,
-      comment: matchesTable.comment,
-    })
-    .from(matchesTable)
-    .where(eq(matchesTable.groupId, groupId))
-    .orderBy(desc(matchesTable.date));
+  const matches = await findMatchesByGroupId(groupId);
 
   const result: MatchListItem[] = [];
 
@@ -53,25 +41,12 @@ export async function getMatchesForGroup(
 async function computePlayerResults(
   matchId: number
 ): Promise<PlayerMatchResult[]> {
-  const games = await db
-    .select({ id: gamesTable.id })
-    .from(gamesTable)
-    .where(eq(gamesTable.matchId, matchId));
+  const games = await findGameIdsByMatchId(matchId);
 
   if (games.length === 0) return [];
 
   const gameIds = games.map((g) => g.id);
-
-  const allScores = await db
-    .select({
-      gameId: gameScoresTable.gameId,
-      playerId: gameScoresTable.playerId,
-      playerName: playersTable.nickname,
-      score: gameScoresTable.score,
-    })
-    .from(gameScoresTable)
-    .innerJoin(playersTable, eq(gameScoresTable.playerId, playersTable.id))
-    .where(inArray(gameScoresTable.gameId, gameIds));
+  const allScores = await findScoresByGameIds(gameIds);
 
   // Group scores by game
   const scoresByGame = new Map<number, typeof allScores>();

@@ -1,11 +1,13 @@
 "use server";
 
-import { db } from "@/lib/db";
-import { groupsTable } from "@/lib/db/schemas/groups";
-import { playersGroupsTable } from "@/lib/db/schemas/players-groups";
-import { eq, and, notInArray, inArray } from "drizzle-orm";
 import { auth0 } from "@/lib/auth0";
 import { redirect } from "next/navigation";
+import {
+  updateGroupById,
+  findGroupMemberPlayerIds,
+  removeGroupMembers,
+  insertGroupMembers,
+} from "../repository/groups.repository";
 
 export type UpdateGroupState = {
   error?: string;
@@ -26,45 +28,25 @@ export async function updateGroup(
   }
 
   // Update the group details
-  await db
-    .update(groupsTable)
-    .set({
-      name: data.name.trim(),
-      description: data.description?.trim() || null,
-    })
-    .where(eq(groupsTable.id, groupId));
+  await updateGroupById(groupId, {
+    name: data.name.trim(),
+    description: data.description?.trim() || null,
+  });
 
   // Sync players: get current members
-  const currentMembers = await db
-    .select({ playerId: playersGroupsTable.playerId })
-    .from(playersGroupsTable)
-    .where(eq(playersGroupsTable.groupId, groupId));
-
-  const currentIds = currentMembers.map((m) => m.playerId);
+  const currentIds = await findGroupMemberPlayerIds(groupId);
   const newIds = data.playerIds;
 
   // Remove players that are no longer in the list
   const toRemove = currentIds.filter((id) => !newIds.includes(id));
   if (toRemove.length > 0) {
-    await db
-      .delete(playersGroupsTable)
-      .where(
-        and(
-          eq(playersGroupsTable.groupId, groupId),
-          inArray(playersGroupsTable.playerId, toRemove)
-        )
-      );
+    await removeGroupMembers(groupId, toRemove);
   }
 
   // Add new players
   const toAdd = newIds.filter((id) => !currentIds.includes(id));
   if (toAdd.length > 0) {
-    await db.insert(playersGroupsTable).values(
-      toAdd.map((playerId) => ({
-        playerId,
-        groupId,
-      }))
-    );
+    await insertGroupMembers(groupId, toAdd);
   }
 
   return { success: true };

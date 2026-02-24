@@ -1,11 +1,10 @@
 "use server";
 
-import { db } from "@/lib/db";
-import { matchesTable } from "@/lib/db/schemas/matches";
-import { gamesTable } from "@/lib/db/schemas/games";
-import { gameScoresTable } from "@/lib/db/schemas/game-scores";
-import { playersTable } from "@/lib/db/schemas/players";
-import { eq, desc, inArray } from "drizzle-orm";
+import {
+  getMatchIdsByGroupId,
+  getGameIdsByMatchId,
+  getScoresByGameIds,
+} from "@/features/matches";
 
 export type PlayerStats = {
   playerId: number;
@@ -19,11 +18,7 @@ export type PlayerStats = {
 export async function getGroupPlayerStats(
   groupId: number
 ): Promise<PlayerStats[]> {
-  const matches = await db
-    .select({ id: matchesTable.id })
-    .from(matchesTable)
-    .where(eq(matchesTable.groupId, groupId))
-    .orderBy(desc(matchesTable.date));
+  const matches = await getMatchIdsByGroupId(groupId);
 
   if (matches.length === 0) return [];
 
@@ -85,25 +80,12 @@ type MatchPlayerData = {
 async function computeMatchPlayerData(
   matchId: number
 ): Promise<MatchPlayerData[]> {
-  const games = await db
-    .select({ id: gamesTable.id })
-    .from(gamesTable)
-    .where(eq(gamesTable.matchId, matchId));
+  const games = await getGameIdsByMatchId(matchId);
 
   if (games.length === 0) return [];
 
   const gameIds = games.map((g) => g.id);
-
-  const allScores = await db
-    .select({
-      gameId: gameScoresTable.gameId,
-      playerId: gameScoresTable.playerId,
-      playerName: playersTable.nickname,
-      score: gameScoresTable.score,
-    })
-    .from(gameScoresTable)
-    .innerJoin(playersTable, eq(gameScoresTable.playerId, playersTable.id))
-    .where(inArray(gameScoresTable.gameId, gameIds));
+  const allScores = await getScoresByGameIds(gameIds);
 
   // Group scores by game
   const scoresByGame = new Map<number, typeof allScores>();

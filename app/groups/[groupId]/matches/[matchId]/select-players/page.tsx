@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getGroupById, getGroupMembers } from "@/features/groups";
 import { getMatchById } from "@/features/matches";
-import { PlayerSelector } from "@/features/matches/components/player-selector";
+import { PlayerSelector } from "@/features/matches/components/PlayerSelector";
 
 type Props = {
   params: Promise<{ groupId: string; matchId: string }>;

@@ -5,10 +5,7 @@ import {
   CreateGroupButton,
   getGroupsForUser,
 } from "@/features/groups";
-import { db } from "@/lib/db";
-import { playersTable } from "@/lib/db/schemas/players";
-import { usersTable } from "@/lib/db/schemas/users";
-import { eq } from "drizzle-orm";
+import { getPlayerDisplayName } from "@/features/players";
 import { Button } from "@/components/ui/button";
 
 export default async function Home() {
@@ -35,27 +32,8 @@ export default async function Home() {
 
   // Get the player's display name
   const user = session.user;
-  let playerName = user.name || user.email || "Player";
-
-  const dbUser = await db
-    .select({ id: usersTable.id })
-    .from(usersTable)
-    .where(eq(usersTable.externalId, user.sub))
-    .limit(1);
-
-  if (dbUser.length > 0) {
-    const player = await db
-      .select({
-        nickname: playersTable.nickname,
-      })
-      .from(playersTable)
-      .where(eq(playersTable.userId, dbUser[0].id))
-      .limit(1);
-
-    if (player.length > 0) {
-      playerName = player[0].nickname || playerName;
-    }
-  }
+  const fallbackName = user.name || user.email || "Player";
+  const playerName = await getPlayerDisplayName(user.sub, fallbackName);
 
   // Get groups the user belongs to
   const groups = await getGroupsForUser(user.sub);

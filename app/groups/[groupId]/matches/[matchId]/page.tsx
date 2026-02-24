@@ -4,17 +4,17 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { DeleteMatchButton } from "@/features/matches/components/delete-match-button";
+import { DeleteMatchButton } from "@/features/matches/components/DeleteMatchButton";
 import {
   getMatchById,
   getMatchGames,
   getMatchPlayers,
   getAllMarks,
 } from "@/features/matches";
-import { MatchTimer } from "@/features/matches/components/match-timer";
-import { PlayerStatsSummary } from "@/features/matches/components/player-stats-summary";
-import { GameList } from "@/features/matches/components/game-list";
-import { MatchActions } from "@/features/matches/components/match-actions";
+import { MatchTimer } from "@/features/matches/components/MatchTimer";
+import { PlayerStatsSummary } from "@/features/matches/components/PlayerStatsSummary";
+import { GameList } from "@/features/matches/components/GameList";
+import { MatchActions } from "@/features/matches/components/MatchActions";
 
 type Props = {
   params: Promise<{ groupId: string; matchId: string }>;
