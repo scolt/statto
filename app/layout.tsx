@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Head from "next/head";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,6 +16,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Statto — Track Your Game Stats",
   description: "Track your stats, compete with friends, and see who really is the best.",
+  other: {
+    'google-adsense-account': 'ca-pub-2076261275903812',
+  },
 };
 
 export const viewport: Viewport = {
@@ -32,7 +36,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
+    <body
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
       >
         <div className="flex min-h-svh flex-col">{children}</div>
