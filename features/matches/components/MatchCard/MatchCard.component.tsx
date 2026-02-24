@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { MatchPlayerResults } from "./MatchPlayerResults";
 import type { MatchListItem } from "@/features/matches/queries/get-matches-for-group";
 
@@ -16,7 +15,7 @@ const STATUS_CONFIG: Record<
   { label: string; variant: "default" | "secondary" | "outline" }
 > = {
   new: { label: "New", variant: "outline" },
-  in_progress: { label: "In Progress", variant: "default" },
+  in_progress: { label: "Live", variant: "default" },
   done: { label: "Done", variant: "secondary" },
 };
 
@@ -40,40 +39,42 @@ export function MatchCard({ match, index, groupId }: Props) {
 
   return (
     <Link href={`/groups/${groupId}/matches/${match.id}`}>
-      <Card className="cursor-pointer transition-shadow hover:shadow-md">
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-base">Match #{index}</CardTitle>
-            <Badge variant={badge.variant} className="text-[10px]">
-              {badge.label}
-            </Badge>
-          </div>
-          <CardDescription>
-            {match.date.toLocaleDateString("en-US", {
-              weekday: "short",
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </CardDescription>
+      <div className="card-hover rounded-2xl border bg-card p-4">
+        {/* Top row */}
+        <div className="mb-2 flex items-center justify-between">
+          <span className="text-sm font-semibold">Match #{index}</span>
+          <Badge variant={badge.variant} className="text-[10px]">
+            {badge.label}
+          </Badge>
+        </div>
+
+        {/* Date + Duration */}
+        <p className="text-xs text-muted-foreground">
+          {match.date.toLocaleDateString("en-US", {
+            weekday: "short",
+            month: "short",
+            day: "numeric",
+          })}
           {duration && (
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <Clock className="size-3" />
-              <span>{duration}</span>
-            </div>
+            <span className="ml-2 inline-flex items-center gap-1">
+              <Clock className="inline size-3" />
+              {duration}
+            </span>
           )}
-          {match.comment && (
-            <CardDescription className="line-clamp-2">
-              {match.comment}
-            </CardDescription>
-          )}
-          {match.playerResults.length > 0 && (
-            <MatchPlayerResults players={match.playerResults} />
-          )}
-        </CardHeader>
-      </Card>
+        </p>
+
+        {/* Comment */}
+        {match.comment && (
+          <p className="mt-1.5 line-clamp-1 text-xs text-muted-foreground italic">
+            {match.comment}
+          </p>
+        )}
+
+        {/* Player results */}
+        {match.playerResults.length > 0 && (
+          <MatchPlayerResults players={match.playerResults} />
+        )}
+      </div>
     </Link>
   );
 }

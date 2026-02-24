@@ -25,11 +25,22 @@ export async function updateMatchStatus(
     status: "new" | "in_progress" | "done";
     startedAt?: Date | null;
     finishedAt?: Date | null;
+    comment?: string | null;
   }
 ): Promise<void> {
   await db
     .update(matchesTable)
     .set(data)
+    .where(eq(matchesTable.id, matchId));
+}
+
+export async function updateMatchComment(
+  matchId: number,
+  comment: string | null
+): Promise<void> {
+  await db
+    .update(matchesTable)
+    .set({ comment })
     .where(eq(matchesTable.id, matchId));
 }
 
@@ -197,6 +208,10 @@ export async function insertGameMarks(
       markId,
     }))
   );
+}
+
+export async function deleteGameById(gameId: number): Promise<void> {
+  await db.delete(gamesTable).where(eq(gamesTable.id, gameId));
 }
 
 export async function findAllMarks() {

@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import {
   insertMatch,
   updateMatchStatus,
+  updateMatchComment,
   insertMatchPlayers,
   findMatchPlayers,
 } from "../repository/matches.repository";
@@ -30,7 +31,10 @@ export async function startMatch(matchId: number): Promise<void> {
   });
 }
 
-export async function completeMatch(matchId: number): Promise<void> {
+export async function completeMatch(
+  matchId: number,
+  comment?: string | null
+): Promise<void> {
   const session = await auth0.getSession();
   if (!session?.user) {
     redirect("/auth/login");
@@ -39,7 +43,20 @@ export async function completeMatch(matchId: number): Promise<void> {
   await updateMatchStatus(matchId, {
     status: "done",
     finishedAt: new Date(),
+    comment: comment?.trim() || null,
   });
+}
+
+export async function saveMatchComment(
+  matchId: number,
+  comment: string | null
+): Promise<void> {
+  const session = await auth0.getSession();
+  if (!session?.user) {
+    redirect("/auth/login");
+  }
+
+  await updateMatchComment(matchId, comment?.trim() || null);
 }
 
 export async function uncompleteMatch(matchId: number): Promise<void> {

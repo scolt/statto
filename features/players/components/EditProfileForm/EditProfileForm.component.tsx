@@ -43,7 +43,6 @@ export function EditProfileForm({
   const [serverError, setServerError] = useState<string | undefined>();
   const [successMessage, setSuccessMessage] = useState<string | undefined>();
 
-  // Nickname availability state
   const [nicknameStatus, setNicknameStatus] = useState<
     "idle" | "checking" | "available" | "taken"
   >("idle");
@@ -58,7 +57,6 @@ export function EditProfileForm({
 
   const watchedNickname = form.watch("nickname");
 
-  // Debounced nickname availability check
   const checkNickname = useCallback(
     (value: string) => {
       if (debounceRef.current) {
@@ -67,7 +65,6 @@ export function EditProfileForm({
 
       const trimmed = value.trim();
 
-      // If unchanged from initial, no need to check
       if (trimmed === initialNickname) {
         setNicknameStatus("idle");
         return;
@@ -78,7 +75,6 @@ export function EditProfileForm({
         return;
       }
 
-      // Basic format validation before checking server
       if (!/^[a-zA-Z0-9_\-. ]+$/.test(trimmed)) {
         setNicknameStatus("idle");
         return;
@@ -102,7 +98,6 @@ export function EditProfileForm({
     checkNickname(watchedNickname);
   }, [watchedNickname, checkNickname]);
 
-  // Cleanup debounce on unmount
   useEffect(() => {
     return () => {
       if (debounceRef.current) {
@@ -131,7 +126,7 @@ export function EditProfileForm({
           form.setError("nickname", { message: result.fieldErrors.nickname });
         }
       } else if (result.success) {
-        setSuccessMessage("Profile updated successfully!");
+        setSuccessMessage("Profile updated!");
         setNicknameStatus("idle");
         router.refresh();
       }
@@ -140,10 +135,7 @@ export function EditProfileForm({
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-4"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
         <FormField
           control={form.control}
           name="name"
@@ -192,31 +184,29 @@ export function EditProfileForm({
                   <Input
                     placeholder="Your unique nickname"
                     {...field}
-                    className="pr-8"
+                    className="pr-9"
                   />
                   {nicknameStatus === "checking" && (
-                    <Loader2 className="text-muted-foreground absolute top-2.5 right-2.5 size-4 animate-spin" />
+                    <Loader2 className="absolute right-3 top-2.5 size-4 animate-spin text-muted-foreground" />
                   )}
                   {nicknameStatus === "available" && (
-                    <Check className="text-green-600 absolute top-2.5 right-2.5 size-4" />
+                    <Check className="absolute right-3 top-2.5 size-4 text-green-600" />
                   )}
                   {nicknameStatus === "taken" && (
-                    <X className="text-destructive absolute top-2.5 right-2.5 size-4" />
+                    <X className="absolute right-3 top-2.5 size-4 text-destructive" />
                   )}
                 </div>
               </FormControl>
               {nicknameStatus === "taken" && (
-                <p className="text-destructive text-sm">
+                <p className="text-sm text-destructive">
                   This nickname is already taken
                 </p>
               )}
               {nicknameStatus === "available" && (
-                <p className="text-sm text-green-600">
-                  Nickname is available!
-                </p>
+                <p className="text-sm text-green-600">Available!</p>
               )}
               <FormDescription>
-                Must be unique across the app. Others will see this in matches and groups.
+                Must be unique. Others will see this in matches and groups.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -224,16 +214,20 @@ export function EditProfileForm({
         />
 
         {serverError && (
-          <p className="text-destructive text-sm font-medium">{serverError}</p>
+          <p className="text-sm font-medium text-destructive">{serverError}</p>
         )}
 
         {successMessage && (
-          <p className="text-sm font-medium text-green-600">{successMessage}</p>
+          <div className="flex items-center gap-2 rounded-lg bg-green-50 px-3 py-2 text-sm font-medium text-green-700">
+            <Check className="size-4" />
+            {successMessage}
+          </div>
         )}
 
         <Button
           type="submit"
           disabled={isPending || nicknameStatus === "taken"}
+          className="w-full sm:w-auto"
         >
           {isPending && <Loader2 className="animate-spin" />}
           {isPending ? "Saving…" : "Save Changes"}

@@ -15,7 +15,7 @@ type Props = {
 export function MatchActions({ matchId, groupId, players, marks, status }: Props) {
   if (status === "new") {
     return (
-      <div className="mb-6 flex flex-wrap gap-3">
+      <div className="mb-6 flex flex-wrap gap-2">
         <StartMatchTimerButton matchId={matchId} />
       </div>
     );
@@ -23,7 +23,7 @@ export function MatchActions({ matchId, groupId, players, marks, status }: Props
 
   if (status === "in_progress") {
     return (
-      <div className="mb-6 flex flex-wrap gap-3">
+      <div className="mb-6 flex flex-wrap gap-2">
         <ReportGameButton
           matchId={matchId}
           groupId={groupId}
@@ -35,9 +35,8 @@ export function MatchActions({ matchId, groupId, players, marks, status }: Props
     );
   }
 
-  // done
   return (
-    <div className="mb-6 flex flex-wrap gap-3">
+    <div className="mb-6 flex flex-wrap gap-2">
       <UncompleteMatchButton matchId={matchId} />
     </div>
   );

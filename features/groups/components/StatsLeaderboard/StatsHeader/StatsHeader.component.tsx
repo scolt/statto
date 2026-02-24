@@ -11,16 +11,16 @@ type Column = {
 };
 
 const COLUMNS: Column[] = [
-  { emoji: "🏆", tooltip: "Match wins (draws count for all tied players)" },
-  { emoji: "⚡", tooltip: "Game wins (total individual games won)" },
-  { emoji: "🎮", tooltip: "Total games played" },
-  { emoji: "🎯", tooltip: "Total points scored (sum of all game scores)" },
+  { emoji: "🏆", tooltip: "Match wins" },
+  { emoji: "⚡", tooltip: "Game wins" },
+  { emoji: "🎮", tooltip: "Games played" },
+  { emoji: "🎯", tooltip: "Total points" },
 ];
 
 export function StatsHeader() {
   return (
     <TooltipProvider>
-      <div className="bg-muted/50 grid grid-cols-[2.5rem_1fr_2.5rem_2.5rem_2.5rem_2.5rem] items-center gap-2 rounded-t-lg border-b px-4 py-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+      <div className="grid grid-cols-[1.5rem_1fr_repeat(4,2rem)] items-center gap-1.5 border-b bg-muted/50 px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground sm:grid-cols-[2rem_1fr_repeat(4,2.5rem)] sm:gap-2 sm:px-4 sm:text-xs">
         <span>#</span>
         <span>Player</span>
         {COLUMNS.map((col) => (

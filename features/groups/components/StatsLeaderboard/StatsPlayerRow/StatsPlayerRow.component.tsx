@@ -15,9 +15,13 @@ function getRankDisplay(rank: number): string {
 
 export function StatsPlayerRow({ player, rank }: Props) {
   return (
-    <div className="grid grid-cols-[2.5rem_1fr_2.5rem_2.5rem_2.5rem_2.5rem] items-center gap-2 px-4 py-2.5">
-      <span className="text-sm font-medium">{getRankDisplay(rank)}</span>
-      <span className="truncate text-sm font-medium">{player.nickname}</span>
+    <div className="grid grid-cols-[1.5rem_1fr_repeat(4,2rem)] items-center gap-1.5 px-3 py-2.5 sm:grid-cols-[2rem_1fr_repeat(4,2.5rem)] sm:gap-2 sm:px-4">
+      <span className="text-center text-xs font-medium sm:text-sm">
+        {getRankDisplay(rank)}
+      </span>
+      <span className="truncate text-xs font-medium sm:text-sm">
+        {player.nickname}
+      </span>
       <StatsCell value={player.matchWins} highlight="primary" />
       <StatsCell value={player.gameWins} highlight="success" />
       <StatsCell value={player.totalGames} />

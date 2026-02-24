@@ -81,7 +81,7 @@ export function EditGroupForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="max-w-lg space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <FormField
           control={form.control}
           name="name"
@@ -125,11 +125,11 @@ export function EditGroupForm({
         />
 
         {serverError && (
-          <p className="text-destructive text-sm font-medium">{serverError}</p>
+          <p className="text-sm font-medium text-destructive">{serverError}</p>
         )}
 
-        <div className="flex gap-3">
-          <Button type="submit" disabled={isPending}>
+        <div className="flex gap-3 pt-2">
+          <Button type="submit" disabled={isPending} className="flex-1 sm:flex-none">
             {isPending && <Loader2 className="animate-spin" />}
             {isPending ? "Saving…" : "Save Changes"}
           </Button>

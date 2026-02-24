@@ -22,40 +22,49 @@ export default async function GroupPage({ params }: Props) {
   if (!group) notFound();
 
   return (
-    <main className="mx-auto min-h-screen max-w-4xl p-8">
-      <div className="mb-6 flex items-center gap-4">
-        <Button variant="ghost" size="icon" asChild>
-          <Link href="/" aria-label="Back to Home">
-            <ArrowLeft className="size-5" />
-          </Link>
-        </Button>
-        <div className="flex-1">
-          <h1 className="text-2xl font-bold">{group.name}</h1>
-          {group.description && (
-            <p className="text-muted-foreground text-sm">{group.description}</p>
-          )}
+    <main className="flex flex-1 flex-col">
+      {/* Header */}
+      <header className="sticky top-0 z-30 glass border-b safe-top">
+        <div className="mx-auto flex h-14 max-w-2xl items-center gap-3 px-4 sm:px-6">
+          <Button variant="ghost" size="icon" asChild>
+            <Link href="/" aria-label="Back to Home">
+              <ArrowLeft className="size-[18px]" />
+            </Link>
+          </Button>
+          <div className="min-w-0 flex-1">
+            <h1 className="truncate text-lg font-semibold">{group.name}</h1>
+          </div>
+          <Button variant="ghost" size="icon" asChild>
+            <Link href={`/groups/${group.id}/edit`} aria-label="Edit group">
+              <Pencil className="size-4" />
+            </Link>
+          </Button>
+          <DeleteGroupButton groupId={group.id} />
         </div>
-        <Button variant="ghost" size="icon" asChild>
-          <Link href={`/groups/${group.id}/edit`} aria-label="Edit group">
-            <Pencil className="size-4" />
-          </Link>
-        </Button>
-        <DeleteGroupButton groupId={group.id} />
-      </div>
+      </header>
 
-      {/* Player Stats Leaderboard */}
-      <div className="mb-8">
-        <StatsLeaderboard groupId={group.id} />
-      </div>
+      <div className="mx-auto w-full max-w-2xl flex-1 px-4 py-6 sm:px-6 sm:py-8">
+        {/* Description */}
+        {group.description && (
+          <p className="mb-6 text-sm text-muted-foreground">
+            {group.description}
+          </p>
+        )}
 
-      {/* Matches */}
-      <section className="space-y-4">
-        <div className="flex items-center gap-3">
-          <h2 className="text-xl font-semibold">Matches</h2>
-          <StartMatchButton groupId={group.id} />
+        {/* Stats Leaderboard */}
+        <div className="mb-8">
+          <StatsLeaderboard groupId={group.id} />
         </div>
-        <MatchList groupId={group.id} />
-      </section>
+
+        {/* Matches */}
+        <section>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-lg font-semibold">Matches</h2>
+            <StartMatchButton groupId={group.id} />
+          </div>
+          <MatchList groupId={group.id} />
+        </section>
+      </div>
     </main>
   );
 }

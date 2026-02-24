@@ -70,15 +70,10 @@ export function ReportGameForm({
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-      {/* Player scores */}
       <ScoreInputList players={players} form={form} />
 
-      {/* Marks */}
-      {marks.length > 0 && (
-        <MarkCheckboxList marks={marks} form={form} />
-      )}
+      {marks.length > 0 && <MarkCheckboxList marks={marks} form={form} />}
 
-      {/* Comment */}
       <div className="space-y-2">
         <Label htmlFor="game-comment">Comment (optional)</Label>
         <Input
@@ -88,9 +83,8 @@ export function ReportGameForm({
         />
       </div>
 
-      {/* Submit */}
       <div className="flex gap-3 pt-2">
-        <Button type="submit" disabled={isPending}>
+        <Button type="submit" disabled={isPending} className="flex-1 sm:flex-none">
           {isPending && <Loader2 className="animate-spin" />}
           {isPending ? "Saving…" : "Save Game"}
         </Button>

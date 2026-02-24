@@ -5,6 +5,7 @@ import {
   insertGame,
   insertGameScores,
   insertGameMarks,
+  deleteGameById,
 } from "../repository/matches.repository";
 
 export type Mark = {
@@ -22,6 +23,10 @@ export type ReportGameInput = {
   markIds: number[];
   comment?: string;
 };
+
+export async function deleteGame(gameId: number): Promise<void> {
+  await deleteGameById(gameId);
+}
 
 export async function reportGame(input: ReportGameInput): Promise<number> {
   const gameId = await insertGame(input.matchId, input.comment || null);

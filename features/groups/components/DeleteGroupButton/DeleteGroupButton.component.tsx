@@ -15,7 +15,11 @@ export function DeleteGroupButton({ groupId }: Props) {
   const [isPending, startTransition] = useTransition();
 
   function handleDelete() {
-    if (!confirm("Delete this group? All matches and games will be permanently deleted.")) {
+    if (
+      !confirm(
+        "Delete this group? All matches and games will be permanently deleted."
+      )
+    ) {
       return;
     }
 
@@ -26,11 +30,17 @@ export function DeleteGroupButton({ groupId }: Props) {
   }
 
   return (
-    <Button variant="ghost" size="icon" onClick={handleDelete} disabled={isPending}>
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={handleDelete}
+      disabled={isPending}
+      className="text-destructive hover:text-destructive"
+    >
       {isPending ? (
-        <Loader2 className="size-4 animate-spin text-destructive" />
+        <Loader2 className="size-4 animate-spin" />
       ) : (
-        <Trash2 className="size-4 text-destructive" />
+        <Trash2 className="size-4" />
       )}
     </Button>
   );

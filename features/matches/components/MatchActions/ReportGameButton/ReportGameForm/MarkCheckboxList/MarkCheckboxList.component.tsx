@@ -34,7 +34,7 @@ export function MarkCheckboxList({ marks, form }: Props) {
   return (
     <div className="space-y-3">
       <Label className="text-sm font-semibold">Marks</Label>
-      <div className="flex flex-wrap gap-x-4 gap-y-2">
+      <div className="flex flex-wrap gap-x-4 gap-y-2.5">
         {marks.map((mark) => (
           <div key={mark.id} className="flex items-center gap-2">
             <Checkbox

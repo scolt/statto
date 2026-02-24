@@ -14,7 +14,7 @@ import {
 import { MatchTimer } from "@/features/matches/components/MatchTimer";
 import { PlayerStatsSummary } from "@/features/matches/components/PlayerStatsSummary";
 import { GameList } from "@/features/matches/components/GameList";
-import { MatchActions } from "@/features/matches/components/MatchActions";
+import { MatchInteractiveSection } from "@/features/matches/components/MatchInteractiveSection";
 
 type Props = {
   params: Promise<{ groupId: string; matchId: string }>;
@@ -43,57 +43,68 @@ export default async function MatchPage({ params }: Props) {
   const badge = STATUS_BADGE[match.status] ?? STATUS_BADGE.new;
 
   return (
-    <main className="mx-auto min-h-screen max-w-4xl p-8">
+    <main className="flex flex-1 flex-col">
       {/* Header */}
-      <div className="mb-6 flex items-center gap-4">
-        <Button variant="ghost" size="icon" asChild>
-          <Link href={`/groups/${groupId}`} aria-label="Back to Group">
-            <ArrowLeft className="size-5" />
-          </Link>
-        </Button>
-        <div className="flex-1">
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold">Match #{match.id}</h1>
-            <Badge variant={badge.variant}>{badge.label}</Badge>
+      <header className="sticky top-0 z-30 glass border-b safe-top">
+        <div className="mx-auto flex h-14 max-w-2xl items-center gap-3 px-4 sm:px-6">
+          <Button variant="ghost" size="icon" asChild>
+            <Link href={`/groups/${groupId}`} aria-label="Back to Group">
+              <ArrowLeft className="size-[18px]" />
+            </Link>
+          </Button>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2">
+              <h1 className="truncate text-lg font-semibold">
+                Match #{match.id}
+              </h1>
+              <Badge variant={badge.variant} className="shrink-0 text-[10px]">
+                {badge.label}
+              </Badge>
+            </div>
           </div>
-          <p className="text-muted-foreground text-sm">
-            {match.date.toLocaleDateString("en-US", {
-              weekday: "long",
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </p>
+          <DeleteMatchButton matchId={match.id} groupId={Number(groupId)} />
         </div>
-        <DeleteMatchButton matchId={match.id} groupId={Number(groupId)} />
+      </header>
+
+      <div className="mx-auto w-full max-w-2xl flex-1 px-4 py-6 sm:px-6 sm:py-8">
+        {/* Date */}
+        <p className="mb-4 text-sm text-muted-foreground">
+          {match.date.toLocaleDateString("en-US", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })}
+        </p>
+
+        {/* Timer */}
+        <MatchTimer
+          startedAt={match.startedAt?.toISOString() ?? null}
+          finishedAt={match.finishedAt?.toISOString() ?? null}
+          status={match.status}
+        />
+
+        {/* Player stats */}
+        <PlayerStatsSummary players={players} games={games} />
+
+        {/* Comment + Actions */}
+        <MatchInteractiveSection
+          matchId={match.id}
+          groupId={Number(groupId)}
+          players={players}
+          marks={marks}
+          status={match.status as "new" | "in_progress" | "done"}
+          initialComment={match.comment ?? ""}
+        />
+
+        {/* Games list */}
+        <section>
+          <h2 className="mb-3 text-lg font-semibold">
+            Games ({games.length})
+          </h2>
+          <GameList games={games} matchStatus={match.status as "new" | "in_progress" | "done"} />
+        </section>
       </div>
-
-      {/* Timer */}
-      <MatchTimer
-        startedAt={match.startedAt?.toISOString() ?? null}
-        finishedAt={match.finishedAt?.toISOString() ?? null}
-        status={match.status}
-      />
-
-      {/* Day stats */}
-      <PlayerStatsSummary players={players} games={games} />
-
-      {/* Actions — always shown, content depends on status */}
-      <MatchActions
-        matchId={match.id}
-        groupId={Number(groupId)}
-        players={players}
-        marks={marks}
-        status={match.status}
-      />
-
-      {/* Game list */}
-      <section>
-        <h2 className="mb-3 text-lg font-semibold">
-          Games ({games.length})
-        </h2>
-        <GameList games={games} />
-      </section>
     </main>
   );
 }

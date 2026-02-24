@@ -22,13 +22,15 @@ export function StartMatchButton({ groupId }: Props) {
   }
 
   return (
-    <Button onClick={handleClick} disabled={isPending} size="sm">
+    <Button onClick={handleClick} disabled={isPending} size="sm" className="gap-1.5 rounded-full">
       {isPending ? (
-        <Loader2 className="animate-spin" />
+        <Loader2 className="size-3.5 animate-spin" />
       ) : (
-        <Plus className="size-4" />
+        <Plus className="size-3.5" />
       )}
-      {isPending ? "Creating…" : "Start New Match"}
+      <span className="hidden sm:inline">
+        {isPending ? "Creating…" : "New Match"}
+      </span>
     </Button>
   );
 }

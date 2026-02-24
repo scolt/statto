@@ -22,13 +22,13 @@ export function ScoreInputList({ players, form }: Props) {
       <Label className="text-sm font-semibold">Scores</Label>
       {players.map((player) => (
         <div key={player.id} className="flex items-center gap-3">
-          <span className="text-muted-foreground w-28 shrink-0 truncate text-sm">
+          <span className="min-w-0 flex-1 truncate text-sm text-muted-foreground">
             {player.nickname}
           </span>
           <Input
             type="number"
             min={0}
-            className="w-24"
+            className="w-20 text-center"
             {...form.register(`scores.${player.id}`, { valueAsNumber: true })}
           />
         </div>

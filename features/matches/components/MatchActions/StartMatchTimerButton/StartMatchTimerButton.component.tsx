@@ -22,11 +22,11 @@ export function StartMatchTimerButton({ matchId }: Props) {
   }
 
   return (
-    <Button onClick={handleStart} disabled={isPending}>
+    <Button size="sm" onClick={handleStart} disabled={isPending}>
       {isPending ? (
-        <Loader2 className="size-4 animate-spin" />
+        <Loader2 className="size-3.5 animate-spin" />
       ) : (
-        <Play className="size-4" />
+        <Play className="size-3.5" />
       )}
       {isPending ? "Starting…" : "Start Match"}
     </Button>

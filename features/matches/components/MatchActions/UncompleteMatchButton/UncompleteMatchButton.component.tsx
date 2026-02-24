@@ -24,11 +24,11 @@ export function UncompleteMatchButton({ matchId }: Props) {
   }
 
   return (
-    <Button variant="outline" onClick={handleUncomplete} disabled={isPending}>
+    <Button variant="outline" size="sm" onClick={handleUncomplete} disabled={isPending}>
       {isPending ? (
-        <Loader2 className="size-4 animate-spin" />
+        <Loader2 className="size-3.5 animate-spin" />
       ) : (
-        <Undo2 className="size-4" />
+        <Undo2 className="size-3.5" />
       )}
       {isPending ? "Reverting…" : "Reopen Match"}
     </Button>

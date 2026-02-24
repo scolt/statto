@@ -14,13 +14,17 @@ export async function StatsLeaderboard({ groupId }: Props) {
   }
 
   return (
-    <section className="space-y-3">
-      <h2 className="text-xl font-semibold">Player Stats</h2>
-      <div className="rounded-lg border">
+    <section>
+      <h2 className="mb-3 text-lg font-semibold">Leaderboard</h2>
+      <div className="overflow-hidden rounded-2xl border bg-card">
         <StatsHeader />
         <div className="divide-y">
           {stats.map((player, idx) => (
-            <StatsPlayerRow key={player.playerId} player={player} rank={idx + 1} />
+            <StatsPlayerRow
+              key={player.playerId}
+              player={player}
+              rank={idx + 1}
+            />
           ))}
         </div>
       </div>

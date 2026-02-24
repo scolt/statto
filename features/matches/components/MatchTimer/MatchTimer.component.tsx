@@ -35,7 +35,6 @@ export function MatchTimer({ startedAt, finishedAt, status }: Props) {
 
     setElapsed(computeElapsed(startedAt, finishedAt));
 
-    // Only tick if match is in progress (no finishedAt yet)
     if (status !== "in_progress") return;
 
     const interval = setInterval(() => {
@@ -49,26 +48,33 @@ export function MatchTimer({ startedAt, finishedAt, status }: Props) {
     status === "done" ? (
       <CheckCircle className="size-5 text-green-600" />
     ) : status === "in_progress" ? (
-      <Timer className="text-muted-foreground size-5" />
+      <Timer className="size-5 text-primary" />
     ) : (
-      <Clock className="text-muted-foreground size-5" />
+      <Clock className="size-5 text-muted-foreground" />
     );
 
   const label =
     status === "done"
-      ? "Match Completed"
+      ? "Completed"
       : status === "in_progress"
-        ? "Match Duration"
+        ? "In Progress"
         : "Waiting to Start";
 
+  const bgClass =
+    status === "in_progress"
+      ? "bg-primary/5 border-primary/20"
+      : "bg-card";
+
   return (
-    <div className="mb-6 flex items-center gap-3 rounded-lg border px-4 py-3">
+    <div
+      className={`mb-6 flex items-center gap-3 rounded-2xl border px-4 py-3 ${bgClass}`}
+    >
       {icon}
-      <div>
-        <p className="text-muted-foreground text-xs font-medium uppercase tracking-wide">
+      <div className="flex-1">
+        <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
           {label}
         </p>
-        <p className="font-mono text-2xl font-bold tabular-nums">
+        <p className="font-mono text-xl font-bold tabular-nums sm:text-2xl">
           {startedAt ? formatElapsed(elapsed) : "--:--"}
         </p>
       </div>
