@@ -17,7 +17,7 @@ const openai = apiKey
  * @returns Generated comment string or error message
  */
 export async function generateMatchComment(matchDetails: {
-  players: Array<{ name: string, score?: number }>,
+  players: Array<{ id: number, nickname: string }>,
   games: Array<{ 
     scores: Array<{ playerName: string, score: number }>,
     marks?: Array<{ name: string }>,
@@ -34,8 +34,8 @@ export async function generateMatchComment(matchDetails: {
     
     // Prepare a structured prompt with match details
     const prompt = `Create a funny and entertaining match summary based on these details:
-    
-Players: ${matchDetails.players.map(p => p.name).join(', ')}
+
+Players: ${matchDetails.players.map(p => p.nickname).join(', ')}
 Match Status: ${matchDetails.matchStatus}
 
 Game Results:
