@@ -8,7 +8,11 @@ import {
   updateMatchComment,
   insertMatchPlayers,
   findMatchPlayers,
+  findGamesByMatchId,
+  findScoresByGameIds,
+  findMarksByGameIds
 } from "../repository/matches.repository";
+import { generateMatchComment } from "@/lib/services/openai.service";
 
 export async function createMatch(groupId: number): Promise<number> {
   const session = await auth0.getSession();
@@ -57,6 +61,43 @@ export async function saveMatchComment(
   }
 
   await updateMatchComment(matchId, comment?.trim() || null);
+}
+
+export async function generateAIMatchComment(matchId: number): Promise<string> {
+  const session = await auth0.getSession();
+  if (!session?.user) {
+    redirect("/auth/login");
+  }
+
+  // Get match details
+  const matchPlayers = await findMatchPlayers(matchId);
+  const games = await findGamesByMatchId(matchId);
+
+  // Get game details
+  const gameIds = games.map(game => game.id);
+  const allScores = gameIds.length > 0 ? await findScoresByGameIds(gameIds) : [];
+  const allMarks = gameIds.length > 0 ? await findMarksByGameIds(gameIds) : [];
+
+  // Organize data for the OpenAI prompt
+  const gameDetails = games.map(game => {
+    return {
+      comment: game.comment,
+      scores: allScores.filter(score => score.gameId === game.id),
+      marks: allMarks.filter(mark => mark.gameId === game.id)
+    };
+  });
+
+  // Generate comment
+  const generatedComment = await generateMatchComment({
+    players: matchPlayers,
+    games: gameDetails,
+    matchStatus: "completed",
+  });
+
+  // Save the generated comment
+  await updateMatchComment(matchId, generatedComment);
+
+  return generatedComment;
 }
 
 export async function uncompleteMatch(matchId: number): Promise<void> {

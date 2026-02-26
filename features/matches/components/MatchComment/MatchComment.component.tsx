@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
-import { MessageSquare, Check } from "lucide-react";
+import { MessageSquare, Check, Sparkles } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import { saveMatchComment } from "@/features/matches";
+import { Button } from "@/components/ui/button";
+import { saveMatchComment, generateAIMatchComment } from "@/features/matches";
 
 type Props = {
   matchId: number;
@@ -21,6 +22,7 @@ export function MatchComment({
   const [value, setValue] = useState(initialComment);
   const [isFocused, setIsFocused] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const fadeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -45,6 +47,25 @@ export function MatchComment({
     [matchId, onChange]
   );
 
+  const handleAIGenerate = async () => {
+    if (disabled) return;
+    
+    try {
+      setIsGenerating(true);
+      const generatedComment = await generateAIMatchComment(matchId);
+      setValue(generatedComment);
+      onChange(generatedComment);
+      setSaved(true);
+      
+      if (fadeTimeoutRef.current) clearTimeout(fadeTimeoutRef.current);
+      fadeTimeoutRef.current = setTimeout(() => setSaved(false), 2000);
+    } catch (error) {
+      console.error('Error generating AI comment:', error);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   useEffect(() => {
     return () => {
       if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
@@ -54,17 +75,30 @@ export function MatchComment({
 
   return (
     <div className="mb-6">
-      <div className="flex items-center gap-2 mb-2">
-        <MessageSquare className="size-4 text-muted-foreground" />
-        <span className="text-sm font-medium text-muted-foreground">
-          Match Notes
-        </span>
-        {saved && (
-          <span className="flex items-center gap-1 text-[11px] text-green-600 dark:text-green-400 animate-in fade-in slide-in-from-left-1 duration-200">
-            <Check className="size-3" />
-            Saved
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2">
+          <MessageSquare className="size-4 text-muted-foreground" />
+          <span className="text-sm font-medium text-muted-foreground">
+            Match Notes
           </span>
-        )}
+          {saved && (
+            <span className="flex items-center gap-1 text-[11px] text-green-600 dark:text-green-400 animate-in fade-in slide-in-from-left-1 duration-200">
+              <Check className="size-3" />
+              Saved
+            </span>
+          )}
+        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8" 
+          onClick={handleAIGenerate}
+          disabled={disabled || isGenerating}
+          title="Generate with AI"
+        >
+          <Sparkles className="size-4" />
+          <span className="sr-only">Generate with AI</span>
+        </Button>
       </div>
       <div
         className={`rounded-xl border bg-card transition-all ${
@@ -78,8 +112,8 @@ export function MatchComment({
           onChange={handleChange}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          placeholder="Add notes about this match…"
-          disabled={disabled}
+          placeholder="Add notes about this match or click the sparkle icon for AI-generated comment..."
+          disabled={disabled || isGenerating}
           className="min-h-[60px] resize-none border-0 bg-transparent shadow-none focus-visible:ring-0 text-sm"
           rows={2}
         />
