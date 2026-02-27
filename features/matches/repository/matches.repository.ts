@@ -6,7 +6,7 @@ import { gameScoresTable } from "@/lib/db/schemas/game-scores";
 import { gameMarksTable } from "@/lib/db/schemas/game-marks";
 import { playersTable } from "@/lib/db/schemas/players";
 import { marksTable } from "@/lib/db/schemas/marks";
-import { eq, desc, inArray, sql } from "drizzle-orm";
+import { eq, desc, inArray, and } from "drizzle-orm";
 
 // --- Match CRUD ---
 
@@ -87,12 +87,16 @@ export async function findMatchesByGroupId(groupId: number) {
 }
 
 export async function findMatchIdsByGroupId(
-  groupId: number
+  groupId: number,
+  options?: { onlyCompleted?: boolean }
 ): Promise<{ id: number }[]> {
+  const where = options?.onlyCompleted
+    ? and(eq(matchesTable.groupId, groupId), eq(matchesTable.status, "done"))
+    : eq(matchesTable.groupId, groupId);
   return db
     .select({ id: matchesTable.id })
     .from(matchesTable)
-    .where(eq(matchesTable.groupId, groupId))
+    .where(where)
     .orderBy(desc(matchesTable.date));
 }
 

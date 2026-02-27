@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 import { MessageSquare, Check, Sparkles } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,7 @@ export function MatchComment({
   onChange,
   disabled,
 }: Props) {
+  const t = useTranslations();
   const [value, setValue] = useState(initialComment);
   const [isFocused, setIsFocused] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -79,12 +81,12 @@ export function MatchComment({
         <div className="flex items-center gap-2">
           <MessageSquare className="size-4 text-muted-foreground" />
           <span className="text-sm font-medium text-muted-foreground">
-            Match Notes
+            {t('notes.title')}
           </span>
           {saved && (
             <span className="flex items-center gap-1 text-[11px] text-green-600 dark:text-green-400 animate-in fade-in slide-in-from-left-1 duration-200">
               <Check className="size-3" />
-              Saved
+              {t('common.saved')}
             </span>
           )}
         </div>
@@ -94,10 +96,10 @@ export function MatchComment({
           className="h-8 w-8" 
           onClick={handleAIGenerate}
           disabled={disabled || isGenerating}
-          title="Generate with AI"
+          title={t('notes.generateAI')}
         >
           <Sparkles className="size-4" />
-          <span className="sr-only">Generate with AI</span>
+          <span className="sr-only">{t('notes.generateAI')}</span>
         </Button>
       </div>
       <div
@@ -112,7 +114,7 @@ export function MatchComment({
           onChange={handleChange}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          placeholder="Add notes about this match or click the sparkle icon for AI-generated comment..."
+          placeholder={t('notes.placeholder')}
           disabled={disabled || isGenerating}
           className="min-h-[60px] resize-none border-0 bg-transparent shadow-none focus-visible:ring-0 text-sm"
           rows={2}

@@ -1,6 +1,7 @@
 import { auth0 } from "@/lib/auth0";
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
+import { getTranslations, getLocale } from "next-intl/server";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,20 +12,17 @@ import {
   getMatchPlayers,
   getAllMarks,
 } from "@/features/matches";
-import { MatchTimer } from "@/features/matches/components/MatchTimer";
-import { PlayerStatsSummary } from "@/features/matches/components/PlayerStatsSummary";
-import { GameList } from "@/features/matches/components/GameList";
-import { MatchInteractiveSection } from "@/features/matches/components/MatchInteractiveSection";
+import { MatchPageClient } from "./MatchPageClient";
 
 type Props = {
   params: Promise<{ groupId: string; matchId: string }>;
 };
 
-const STATUS_BADGE: Record<string, { label: string; variant: "default" | "secondary" | "outline" }> = {
-  new: { label: "New", variant: "outline" },
-  in_progress: { label: "In Progress", variant: "default" },
-  paused: { label: "Paused", variant: "outline" },
-  done: { label: "Completed", variant: "secondary" },
+const BADGE_VARIANTS: Record<string, "default" | "secondary" | "outline"> = {
+  new: "outline",
+  in_progress: "default",
+  paused: "outline",
+  done: "secondary",
 };
 
 export default async function MatchPage({ params }: Props) {
@@ -32,9 +30,13 @@ export default async function MatchPage({ params }: Props) {
   if (!session) redirect("/auth/login");
 
   const { groupId, matchId } = await params;
-  const match = await getMatchById(Number(matchId));
+  const [match, t, locale] = await Promise.all([
+    getMatchById(Number(matchId)),
+    getTranslations(),
+    getLocale(),
+  ]);
   if (!match) notFound();
-  
+
   // Parallel: fetch games, players, and marks at the same time
   const [games, players, marks] = await Promise.all([
     getMatchGames(match.id),
@@ -42,7 +44,17 @@ export default async function MatchPage({ params }: Props) {
     getAllMarks(),
   ]);
 
-  const badge = STATUS_BADGE[match.status] ?? STATUS_BADGE.new;
+  // Resolve the current user's player profile to check participation
+  const { findFullProfileByExternalId } = await import(
+    "@/features/players/repository/players.repository"
+  );
+  const profile = await findFullProfileByExternalId(session.user.sub);
+  const currentPlayerId = profile?.playerId ?? null;
+  const isParticipant = currentPlayerId !== null &&
+    players.some((p) => p.id === currentPlayerId);
+
+  const statusKey = match.status as "new" | "in_progress" | "paused" | "done";
+  const badgeVariant = BADGE_VARIANTS[statusKey] ?? "outline";
 
   return (
     <main className="flex flex-1 flex-col">
@@ -50,28 +62,30 @@ export default async function MatchPage({ params }: Props) {
       <header className="sticky top-0 z-30 glass border-b safe-top">
         <div className="mx-auto flex h-14 max-w-2xl items-center gap-3 px-4 sm:px-6">
           <Button variant="ghost" size="icon" asChild>
-            <Link href={`/groups/${groupId}`} aria-label="Back to Group">
+            <Link href={`/groups/${groupId}`} aria-label={t('common.back')}>
               <ArrowLeft className="size-[18px]" />
             </Link>
           </Button>
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
               <h1 className="truncate text-lg font-semibold">
-                Match #{match.id}
+                {t('matches.match')} #{match.id}
               </h1>
-              <Badge variant={badge.variant} className="shrink-0 text-[10px]">
-                {badge.label}
+              <Badge variant={badgeVariant} className="shrink-0 text-[10px]">
+                {t(`matches.status.${statusKey}`)}
               </Badge>
             </div>
           </div>
-          <DeleteMatchButton matchId={match.id} groupId={Number(groupId)} />
+          {isParticipant && (
+            <DeleteMatchButton matchId={match.id} groupId={Number(groupId)} />
+          )}
         </div>
       </header>
 
       <div className="mx-auto w-full max-w-2xl flex-1 px-4 py-6 sm:px-6 sm:py-8">
         {/* Date */}
         <p className="mb-4 text-sm text-muted-foreground">
-          {match.date.toLocaleDateString("en-US", {
+          {match.date.toLocaleDateString(locale, {
             weekday: "long",
             year: "numeric",
             month: "long",
@@ -79,34 +93,19 @@ export default async function MatchPage({ params }: Props) {
           })}
         </p>
 
-        {/* Timer */}
-        <MatchTimer
-          matchId={match.id}
-          duration={match.duration}
-          timerStartedAt={match.timerStartedAt?.toISOString() ?? null}
-          status={match.status}
-        />
-
-        {/* Player stats */}
-        <PlayerStatsSummary players={players} games={games} />
-
-        {/* Comment + Actions */}
-        <MatchInteractiveSection
+        {/* Client section: timer + optimistic stats + interactive actions + game list */}
+        <MatchPageClient
           matchId={match.id}
           groupId={Number(groupId)}
           players={players}
           marks={marks}
           status={match.status as "new" | "in_progress" | "paused" | "done"}
+          duration={match.duration}
+          timerStartedAt={match.timerStartedAt?.toISOString() ?? null}
           initialComment={match.comment ?? ""}
+          initialGames={games}
+          isParticipant={isParticipant}
         />
-        
-        {/* Games list */}
-        <section>
-          <h2 className="mb-3 text-lg font-semibold">
-            Games ({games.length})
-          </h2>
-          <GameList games={games} />
-        </section>
       </div>
     </main>
   );

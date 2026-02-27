@@ -1,5 +1,6 @@
 import { usersTable } from './schemas/users';
 import { playersTable } from './schemas/players';
+import { sportsTable } from './schemas/sports';
 import { groupsTable } from './schemas/groups';
 import { playersGroupsTable } from './schemas/players-groups';
 import { matchesTable } from './schemas/matches';
@@ -12,6 +13,7 @@ import { gameMarksTable } from './schemas/game-marks';
 export {
   usersTable,
   playersTable,
+  sportsTable,
   groupsTable,
   playersGroupsTable,
   matchesTable,

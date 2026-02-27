@@ -1,0 +1,150 @@
+{
+  "common": {
+    "save": "Opslaan",
+    "cancel": "Annuleren",
+    "delete": "Verwijderen",
+    "edit": "Bewerken",
+    "loading": "Laden...",
+    "error": "Er is iets misgegaan",
+    "back": "Terug",
+    "confirm": "Bevestigen",
+    "saved": "Opgeslagen",
+    "creating": "Aanmaken…",
+    "saving": "Opslaan…",
+    "deleting": "Verwijderen…"
+  },
+  "auth": {
+    "signIn": "Inloggen",
+    "signUp": "Registreren",
+    "signOut": "Uitloggen"
+  },
+  "landing": {
+    "tagline": "Volg je statistieken, daag je vrienden uit en beslis eens en voor altijd wie de beste is.",
+    "welcomeBack": "Welkom terug,"
+  },
+  "profile": {
+    "title": "Profiel",
+    "editProfile": "Profiel bewerken",
+    "accountInfo": "Accountinformatie",
+    "provider": "Provider",
+    "memberSince": "Lid sinds",
+    "favouriteSports": "Favoriete sporten",
+    "name": "Naam",
+    "namePlaceholder": "Je weergavenaam",
+    "nameRequired": "Naam is verplicht",
+    "nickname": "Bijnaam",
+    "nicknamePlaceholder": "Je unieke bijnaam",
+    "nicknameRequired": "Bijnaam is verplicht",
+    "nicknameHint": "Moet uniek zijn. Anderen zien dit in wedstrijden en groepen.",
+    "nicknameTaken": "Deze bijnaam is al in gebruik",
+    "nicknameAvailable": "Beschikbaar!",
+    "saveChanges": "Wijzigingen opslaan",
+    "profileUpdated": "Profiel bijgewerkt!",
+    "language": "Taal",
+    "languageHint": "Kies je voorkeurstaal voor de interface."
+  },
+  "groups": {
+    "title": "Jouw groepen",
+    "createGroup": "Groep aanmaken",
+    "editGroup": "Groep bewerken",
+    "newGroup": "Nieuwe groep",
+    "noGroups": "Nog geen groepen",
+    "noGroupsHint": "Maak er een aan om statistieken bij te houden!",
+    "groupName": "Groepsnaam",
+    "groupNamePlaceholder": "bijv. Vrijdagavond voetbal",
+    "groupNameRequired": "Groepsnaam is verplicht",
+    "description": "Beschrijving",
+    "descriptionPlaceholder": "Waar gaat deze groep over?",
+    "sport": "Sport",
+    "players": "Spelers",
+    "deleteGroup": "Groep verwijderen",
+    "deleteGroupConfirm": "Deze groep verwijderen? Alle wedstrijden en games worden permanent verwijderd."
+  },
+  "matches": {
+    "title": "Wedstrijden",
+    "newMatch": "Nieuwe wedstrijd",
+    "noMatches": "Nog geen wedstrijden",
+    "noMatchesHint": "Start een nieuwe wedstrijd!",
+    "match": "Wedstrijd",
+    "matchNumber": "Wedstrijd #{number}",
+    "selectPlayers": "Spelers selecteren",
+    "selectPlayersHint": "Kies wie er meedoen aan deze wedstrijd",
+    "noMembers": "Nog geen leden in deze groep.",
+    "selectAtLeast": "Selecteer minimaal 2 spelers",
+    "deleteMatch": "Wedstrijd verwijderen",
+    "deleteMatchConfirm": "Deze wedstrijd verwijderen? Alle games en scores worden permanent verwijderd.",
+    "status": {
+      "new": "Nieuw",
+      "in_progress": "Live",
+      "paused": "Gepauzeerd",
+      "done": "Klaar"
+    },
+    "statusLabel": {
+      "new": "Wacht op start",
+      "in_progress": "Bezig",
+      "paused": "Gepauzeerd",
+      "done": "Voltooid"
+    }
+  },
+  "timer": {
+    "start": "Wedstrijd starten",
+    "starting": "Starten…",
+    "pause": "Pauzeren",
+    "resume": "Hervatten",
+    "complete": "Voltooien",
+    "completing": "Voltooien…",
+    "completeConfirm": "Weet je zeker dat je deze wedstrijd wilt voltooien?",
+    "reopen": "Wedstrijd heropenen",
+    "reopening": "Terugzetten…",
+    "reopenConfirm": "Wedstrijd terugzetten naar Bezig?"
+  },
+  "games": {
+    "title": "Games",
+    "noGames": "Nog geen games",
+    "noGamesHint": "Rapporteer een game om te beginnen!",
+    "reportGame": "Game rapporteren",
+    "saveGame": "Game opslaan",
+    "game": "Game",
+    "gameOf": "Game {current} van {total}",
+    "scores": "Scores",
+    "marks": "Markeringen",
+    "comment": "Opmerking (optioneel)",
+    "commentPlaceholder": "Notities over deze game…",
+    "deleteGame": "Game verwijderen",
+    "deleteGameConfirm": "Deze game verwijderen?"
+  },
+  "notes": {
+    "title": "Wedstrijdnotities",
+    "placeholder": "Voeg notities toe over deze wedstrijd of klik op het sparkle-icoon voor AI-gegenereerde opmerking...",
+    "generateAI": "Genereer met AI"
+  },
+  "leaderboard": {
+    "title": "Ranglijst",
+    "matchWins": "Wedstrijdoverwinningen",
+    "gameWins": "Game-overwinningen",
+    "gamesPlayed": "Games gespeeld",
+    "totalPoints": "Totaal punten"
+  },
+  "playerSearch": {
+    "label": "Spelers",
+    "placeholder": "Zoek op naam of gebruikersnaam...",
+    "noResults": "Geen spelers gevonden."
+  },
+  "sports": {
+    "table_tennis": "Tafeltennis",
+    "football": "Voetbal",
+    "basketball": "Basketbal",
+    "tennis": "Tennis",
+    "badminton": "Badminton",
+    "volleyball": "Volleybal",
+    "pool": "Pool / Snooker",
+    "darts": "Darts",
+    "chess": "Schaken",
+    "other": "Overig"
+  },
+  "duration": {
+    "hours": "{hours}u {minutes}m",
+    "minutes": "{minutes}m",
+    "lessThanMinute": "<1m"
+  }
+}

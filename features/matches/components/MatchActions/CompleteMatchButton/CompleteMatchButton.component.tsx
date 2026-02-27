@@ -2,6 +2,7 @@
 
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { CheckCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { completeMatch } from "@/features/matches";
@@ -13,10 +14,11 @@ type Props = {
 
 export function CompleteMatchButton({ matchId, comment }: Props) {
   const router = useRouter();
+  const t = useTranslations();
   const [isPending, startTransition] = useTransition();
 
   function handleComplete() {
-    if (!confirm("Are you sure you want to complete this match?")) return;
+    if (!confirm(t('timer.completeConfirm'))) return;
 
     startTransition(async () => {
       await completeMatch(matchId, comment || null);
@@ -36,7 +38,7 @@ export function CompleteMatchButton({ matchId, comment }: Props) {
       ) : (
         <CheckCircle className="size-3.5" />
       )}
-      {isPending ? "Completing…" : "Complete"}
+      {isPending ? t('timer.completing') : t('timer.complete')}
     </Button>
   );
 }

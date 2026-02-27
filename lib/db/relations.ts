@@ -1,6 +1,7 @@
 import { relations } from 'drizzle-orm';
 import { usersTable } from './schemas/users';
 import { playersTable } from './schemas/players';
+import { sportsTable } from './schemas/sports';
 import { groupsTable } from './schemas/groups';
 import { playersGroupsTable } from './schemas/players-groups';
 import { matchesTable } from './schemas/matches';
@@ -29,8 +30,17 @@ export const playersRelations = relations(playersTable, ({ one, many }) => ({
   gameScores: many(gameScoresTable),
 }));
 
+// ── Sports ────────────────────────────────────────────
+export const sportsRelations = relations(sportsTable, ({ many }) => ({
+  groups: many(groupsTable),
+}));
+
 // ── Groups ─────────────────────────────────────────────
-export const groupsRelations = relations(groupsTable, ({ many }) => ({
+export const groupsRelations = relations(groupsTable, ({ one, many }) => ({
+  sport: one(sportsTable, {
+    fields: [groupsTable.sportId],
+    references: [sportsTable.id],
+  }),
   playersGroups: many(playersGroupsTable),
   matches: many(matchesTable),
 }));

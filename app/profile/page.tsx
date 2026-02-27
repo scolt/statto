@@ -1,11 +1,15 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
+import { getLocale } from "next-intl/server";
 import { ArrowLeft, LogOut, Calendar, Shield } from "lucide-react";
 import { getCurrentUser } from "@/lib/auth0";
 import { getProfile, EditProfileForm } from "@/features/players";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { LocaleSwitcher } from "@/components/LocaleSwitcher";
+import { type Locale } from "@/i18n/config";
 
 export default async function ProfilePage() {
   const auth0User = await getCurrentUser();
@@ -14,13 +18,17 @@ export default async function ProfilePage() {
     redirect("/auth/login");
   }
 
-  const profile = await getProfile(auth0User.sub);
+  const [profile, t, locale] = await Promise.all([
+    getProfile(auth0User.sub),
+    getTranslations(),
+    getLocale(),
+  ]);
 
   if (!profile) {
     return (
       <div className="flex min-h-svh items-center justify-center px-4">
         <p className="text-destructive">
-          Failed to load profile. Please try again later.
+          {t('common.error')}
         </p>
       </div>
     );
@@ -32,11 +40,11 @@ export default async function ProfilePage() {
       <header className="sticky top-0 z-30 glass border-b safe-top">
         <div className="mx-auto flex h-14 max-w-2xl items-center px-4 sm:px-6">
           <Button variant="ghost" size="icon" asChild>
-            <Link href="/" aria-label="Back to Home">
+            <Link href="/" aria-label={t('common.back')}>
               <ArrowLeft className="size-[18px]" />
             </Link>
           </Button>
-          <h1 className="ml-2 text-lg font-semibold">Profile</h1>
+          <h1 className="ml-2 text-lg font-semibold">{t('profile.title')}</h1>
         </div>
       </header>
 
@@ -62,7 +70,7 @@ export default async function ProfilePage() {
         {/* Edit Profile */}
         <section className="mb-6 rounded-2xl border bg-card p-5 sm:p-6">
           <h3 className="mb-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Edit Profile
+            {t('profile.editProfile')}
           </h3>
           <EditProfileForm
             playerId={profile.playerId}
@@ -71,10 +79,21 @@ export default async function ProfilePage() {
           />
         </section>
 
+        {/* Language */}
+        <section className="mb-6 rounded-2xl border bg-card p-5 sm:p-6">
+          <h3 className="mb-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            {t('profile.language')}
+          </h3>
+          <p className="mb-4 text-sm text-muted-foreground">
+            {t('profile.languageHint')}
+          </p>
+          <LocaleSwitcher currentLocale={locale as Locale} />
+        </section>
+
         {/* Account Info */}
         <section className="mb-6 rounded-2xl border bg-card p-5 sm:p-6">
           <h3 className="mb-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Account Info
+            {t('profile.accountInfo')}
           </h3>
           <div className="space-y-4">
             <div className="flex items-center gap-3">
@@ -82,7 +101,7 @@ export default async function ProfilePage() {
                 <Shield className="size-4 text-muted-foreground" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-xs text-muted-foreground">Provider</p>
+                <p className="text-xs text-muted-foreground">{t('profile.provider')}</p>
                 <p className="truncate text-sm font-medium">
                   {profile.provider ?? "—"}
                 </p>
@@ -93,10 +112,10 @@ export default async function ProfilePage() {
                 <Calendar className="size-4 text-muted-foreground" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-xs text-muted-foreground">Member since</p>
+                <p className="text-xs text-muted-foreground">{t('profile.memberSince')}</p>
                 <p className="text-sm font-medium">
                   {profile.createdAt
-                    ? new Date(profile.createdAt).toLocaleDateString("en-US", {
+                    ? new Date(profile.createdAt).toLocaleDateString(locale, {
                         month: "long",
                         year: "numeric",
                       })
@@ -111,7 +130,7 @@ export default async function ProfilePage() {
         {profile.favouriteSports.length > 0 && (
           <section className="mb-6 rounded-2xl border bg-card p-5 sm:p-6">
             <h3 className="mb-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Favourite Sports
+              {t('profile.favouriteSports')}
             </h3>
             <div className="flex flex-wrap gap-2">
               {profile.favouriteSports.map((sport: string) => (
@@ -129,7 +148,7 @@ export default async function ProfilePage() {
           <Button variant="ghost" className="text-destructive" asChild>
             <a href="/auth/logout">
               <LogOut className="size-4" />
-              Log Out
+              {t('auth.signOut')}
             </a>
           </Button>
         </div>

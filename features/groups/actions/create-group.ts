@@ -26,6 +26,7 @@ export async function createGroup(
   const name = formData.get("name") as string;
   const description = formData.get("description") as string;
   const playerIdsRaw = formData.get("playerIds") as string;
+  const sportIdRaw = formData.get("sportId") as string;
 
   if (!name || name.trim().length === 0) {
     return { error: "Group name is required." };
@@ -61,6 +62,7 @@ export async function createGroup(
   const groupId = await insertGroup({
     name: name.trim(),
     description: description?.trim() || null,
+    sportId: sportIdRaw ? Number(sportIdRaw) : null,
   });
 
   // Add all members to the group

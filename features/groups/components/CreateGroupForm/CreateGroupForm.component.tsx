@@ -3,6 +3,7 @@
 import { useCallback, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -20,14 +21,21 @@ import {
 import { createGroup } from "../../actions/create-group";
 import { PlayerSearchField } from "../PlayerSearchField";
 import type { PlayerSearchResult } from "@/features/players";
+import { SportSelector } from "@/features/sports";
+import type { Sport } from "@/features/sports";
 
 type CreateGroupFormValues = {
   name: string;
   description: string;
 };
 
-export function CreateGroupForm() {
+type Props = {
+  sports: Sport[];
+};
+
+export function CreateGroupForm({ sports }: Props) {
   const router = useRouter();
+  const t = useTranslations();
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState<string | undefined>();
 
@@ -41,6 +49,7 @@ export function CreateGroupForm() {
   const [selectedPlayers, setSelectedPlayers] = useState<PlayerSearchResult[]>(
     []
   );
+  const [selectedSportId, setSelectedSportId] = useState<number | null>(null);
 
   const addPlayer = useCallback((player: PlayerSearchResult) => {
     setSelectedPlayers((prev) => [...prev, player]);
@@ -60,6 +69,9 @@ export function CreateGroupForm() {
       "playerIds",
       JSON.stringify(selectedPlayers.map((p) => p.id))
     );
+    if (selectedSportId !== null) {
+      formData.set("sportId", String(selectedSportId));
+    }
 
     startTransition(async () => {
       const result = await createGroup({}, formData);
@@ -75,15 +87,15 @@ export function CreateGroupForm() {
         <FormField
           control={form.control}
           name="name"
-          rules={{ required: "Group name is required" }}
+          rules={{ required: t('groups.groupNameRequired') }}
           render={({ field }) => (
             <FormItem>
               <FormLabel>
-                Group Name <span className="text-destructive">*</span>
+                {t('groups.groupName')} <span className="text-destructive">*</span>
               </FormLabel>
               <FormControl>
                 <Input
-                  placeholder="e.g. Friday Night Football"
+                  placeholder={t('groups.groupNamePlaceholder')}
                   {...field}
                 />
               </FormControl>
@@ -91,16 +103,16 @@ export function CreateGroupForm() {
             </FormItem>
           )}
         />
-
+        
         <FormField
           control={form.control}
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>{t('groups.description')}</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="What's this group about?"
+                  placeholder={t('groups.descriptionPlaceholder')}
                   rows={3}
                   className="resize-none"
                   {...field}
@@ -110,6 +122,15 @@ export function CreateGroupForm() {
             </FormItem>
           )}
         />
+        
+        <FormItem>
+          <FormLabel>{t('groups.sport')}</FormLabel>
+          <SportSelector
+            sports={sports}
+            value={selectedSportId}
+            onChange={setSelectedSportId}
+          />
+        </FormItem>
 
         <PlayerSearchField
           selectedPlayers={selectedPlayers}
@@ -124,14 +145,14 @@ export function CreateGroupForm() {
         <div className="flex gap-3 pt-2">
           <Button type="submit" disabled={isPending} className="flex-1 sm:flex-none">
             {isPending && <Loader2 className="animate-spin" />}
-            {isPending ? "Creating…" : "Create Group"}
+            {isPending ? t('common.creating') : t('groups.createGroup')}
           </Button>
           <Button
             type="button"
             variant="outline"
             onClick={() => router.push("/")}
           >
-            Cancel
+            {t('common.cancel')}
           </Button>
         </div>
       </form>

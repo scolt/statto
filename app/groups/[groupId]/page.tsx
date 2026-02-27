@@ -1,9 +1,11 @@
 import { auth0 } from "@/lib/auth0";
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { ArrowLeft, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getGroupById } from "@/features/groups";
+import { SportIcon } from "@/features/sports";
 import { StartMatchButton } from "@/features/matches/components/StartMatchButton";
 import { MatchList } from "@/features/matches/components/MatchList";
 import { DeleteGroupButton } from "@/features/groups/components/DeleteGroupButton";
@@ -18,7 +20,10 @@ export default async function GroupPage({ params }: Props) {
   if (!session) redirect("/auth/login");
 
   const { groupId } = await params;
-  const group = await getGroupById(Number(groupId));
+  const [group, t] = await Promise.all([
+    getGroupById(Number(groupId)),
+    getTranslations(),
+  ]);
   if (!group) notFound();
 
   return (
@@ -27,15 +32,33 @@ export default async function GroupPage({ params }: Props) {
       <header className="sticky top-0 z-30 glass border-b safe-top">
         <div className="mx-auto flex h-14 max-w-2xl items-center gap-3 px-4 sm:px-6">
           <Button variant="ghost" size="icon" asChild>
-            <Link href="/" aria-label="Back to Home">
+            <Link href="/" aria-label={t('common.back')}>
               <ArrowLeft className="size-[18px]" />
             </Link>
           </Button>
+
+          {/* Sport icon badge */}
+          {group.sport && (
+            <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <SportIcon
+                slug={group.sport.slug}
+                iconName={group.sport.icon}
+                className="size-4"
+              />
+            </div>
+          )}
+
           <div className="min-w-0 flex-1">
             <h1 className="truncate text-lg font-semibold">{group.name}</h1>
+            {group.sport && (
+              <p className="truncate text-xs text-muted-foreground leading-none mt-0.5">
+                {group.sport.name}
+              </p>
+            )}
           </div>
+
           <Button variant="ghost" size="icon" asChild>
-            <Link href={`/groups/${group.id}/edit`} aria-label="Edit group">
+            <Link href={`/groups/${group.id}/edit`} aria-label={t('common.edit')}>
               <Pencil className="size-4" />
             </Link>
           </Button>
@@ -59,7 +82,7 @@ export default async function GroupPage({ params }: Props) {
         {/* Matches */}
         <section>
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold">Matches</h2>
+            <h2 className="text-lg font-semibold">{t('matches.title')}</h2>
             <StartMatchButton groupId={group.id} />
           </div>
           <MatchList groupId={group.id} />

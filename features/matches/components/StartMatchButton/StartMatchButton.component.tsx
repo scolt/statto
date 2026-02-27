@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { Plus, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createMatch } from "@/features/matches";
@@ -12,6 +13,7 @@ type Props = {
 
 export function StartMatchButton({ groupId }: Props) {
   const router = useRouter();
+  const t = useTranslations();
   const [isPending, startTransition] = useTransition();
 
   function handleClick() {
@@ -29,7 +31,7 @@ export function StartMatchButton({ groupId }: Props) {
         <Plus className="size-3.5" />
       )}
       <span className="hidden sm:inline">
-        {isPending ? "Creating…" : "New Match"}
+        {isPending ? t('common.creating') : t('matches.newMatch')}
       </span>
     </Button>
   );

@@ -1,5 +1,6 @@
 import { auth0 } from "@/lib/auth0";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import {
   GroupList,
   CreateGroupButton,
@@ -11,6 +12,7 @@ import { User, LogOut, Zap } from "lucide-react";
 
 export default async function Home() {
   const session = await auth0.getSession();
+  const t = await getTranslations();
 
   if (!session) {
     return (
@@ -25,14 +27,14 @@ export default async function Home() {
             <span className="text-gradient">Statto</span>
           </h1>
           <p className="mt-3 max-w-sm text-base text-muted-foreground sm:text-lg">
-            Track your stats, compete with friends, and settle the score once and for all.
+            {t('landing.tagline')}
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Button size="lg" className="min-w-[140px]" asChild>
-              <a href="/auth/login">Log In</a>
+              <a href="/auth/login">{t('auth.signIn')}</a>
             </Button>
             <Button size="lg" variant="outline" className="min-w-[140px]" asChild>
-              <a href="/auth/login?screen_hint=signup">Sign Up</a>
+              <a href="/auth/login?screen_hint=signup">{t('auth.signUp')}</a>
             </Button>
           </div>
         </div>
@@ -76,14 +78,14 @@ export default async function Home() {
       <div className="mx-auto w-full max-w-2xl flex-1 px-4 py-6 sm:px-6 sm:py-8">
         {/* Welcome */}
         <section className="mb-8">
-          <p className="text-sm text-muted-foreground">Welcome back,</p>
+          <p className="text-sm text-muted-foreground">{t('landing.welcomeBack')}</p>
           <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">{playerName}</h2>
         </section>
-
+        
         {/* Groups */}
         <section>
           <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-lg font-semibold">Your Groups</h3>
+            <h3 className="text-lg font-semibold">{t('groups.title')}</h3>
             <CreateGroupButton />
           </div>
           <GroupList groups={groups} />

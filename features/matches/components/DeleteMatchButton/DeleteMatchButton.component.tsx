@@ -2,6 +2,7 @@
 
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Trash2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { deleteMatch } from "@/features/matches/actions/delete-match";
@@ -13,14 +14,11 @@ type Props = {
 
 export function DeleteMatchButton({ matchId, groupId }: Props) {
   const router = useRouter();
+  const t = useTranslations();
   const [isPending, startTransition] = useTransition();
 
   function handleDelete() {
-    if (
-      !confirm(
-        "Delete this match? All games and scores will be permanently deleted."
-      )
-    ) {
+    if (!confirm(t('matches.deleteMatchConfirm'))) {
       return;
     }
 

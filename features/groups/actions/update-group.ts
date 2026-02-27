@@ -16,7 +16,7 @@ export type UpdateGroupState = {
 
 export async function updateGroup(
   groupId: number,
-  data: { name: string; description: string; playerIds: number[] }
+  data: { name: string; description: string; playerIds: number[]; sportId: number | null }
 ): Promise<UpdateGroupState> {
   const session = await auth0.getSession();
   if (!session?.user) {
@@ -31,6 +31,7 @@ export async function updateGroup(
   await updateGroupById(groupId, {
     name: data.name.trim(),
     description: data.description?.trim() || null,
+    sportId: data.sportId,
   });
 
   // Sync players: get current members

@@ -1,0 +1,150 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "back": "Back",
+    "confirm": "Confirm",
+    "saved": "Saved",
+    "creating": "Creating…",
+    "saving": "Saving…",
+    "deleting": "Deleting…"
+  },
+  "auth": {
+    "signIn": "Log In",
+    "signUp": "Sign Up",
+    "signOut": "Log Out"
+  },
+  "landing": {
+    "tagline": "Track your stats, compete with friends, and settle the score once and for all.",
+    "welcomeBack": "Welcome back,"
+  },
+  "profile": {
+    "title": "Profile",
+    "editProfile": "Edit Profile",
+    "accountInfo": "Account Info",
+    "provider": "Provider",
+    "memberSince": "Member since",
+    "favouriteSports": "Favourite Sports",
+    "name": "Name",
+    "namePlaceholder": "Your display name",
+    "nameRequired": "Name is required",
+    "nickname": "Nickname",
+    "nicknamePlaceholder": "Your unique nickname",
+    "nicknameRequired": "Nickname is required",
+    "nicknameHint": "Must be unique. Others will see this in matches and groups.",
+    "nicknameTaken": "This nickname is already taken",
+    "nicknameAvailable": "Available!",
+    "saveChanges": "Save Changes",
+    "profileUpdated": "Profile updated!",
+    "language": "Language",
+    "languageHint": "Choose your preferred language for the interface."
+  },
+  "groups": {
+    "title": "Your Groups",
+    "createGroup": "Create Group",
+    "editGroup": "Edit Group",
+    "newGroup": "New Group",
+    "noGroups": "No groups yet",
+    "noGroupsHint": "Create one to start tracking stats!",
+    "groupName": "Group Name",
+    "groupNamePlaceholder": "e.g. Friday Night Football",
+    "groupNameRequired": "Group name is required",
+    "description": "Description",
+    "descriptionPlaceholder": "What's this group about?",
+    "sport": "Sport",
+    "players": "Players",
+    "deleteGroup": "Delete group",
+    "deleteGroupConfirm": "Delete this group? All matches and games will be permanently deleted."
+  },
+  "matches": {
+    "title": "Matches",
+    "newMatch": "New Match",
+    "noMatches": "No matches yet",
+    "noMatchesHint": "Start a new match to get going!",
+    "match": "Match",
+    "matchNumber": "Match #{number}",
+    "selectPlayers": "Select Players",
+    "selectPlayersHint": "Choose who is playing in this match",
+    "noMembers": "No members in this group yet.",
+    "selectAtLeast": "Select at least 2 players",
+    "deleteMatch": "Delete match",
+    "deleteMatchConfirm": "Delete this match? All games and scores will be permanently deleted.",
+    "status": {
+      "new": "New",
+      "in_progress": "Live",
+      "paused": "Paused",
+      "done": "Done"
+    },
+    "statusLabel": {
+      "new": "Waiting to Start",
+      "in_progress": "In Progress",
+      "paused": "Paused",
+      "done": "Completed"
+    }
+  },
+  "timer": {
+    "start": "Start Match",
+    "starting": "Starting…",
+    "pause": "Pause",
+    "resume": "Resume",
+    "complete": "Complete",
+    "completing": "Completing…",
+    "completeConfirm": "Are you sure you want to complete this match?",
+    "reopen": "Reopen Match",
+    "reopening": "Reverting…",
+    "reopenConfirm": "Revert this match to In Progress?"
+  },
+  "games": {
+    "title": "Games",
+    "noGames": "No games yet",
+    "noGamesHint": "Report a game to get started!",
+    "reportGame": "Report Game",
+    "saveGame": "Save Game",
+    "game": "Game",
+    "gameOf": "Game {current} of {total}",
+    "scores": "Scores",
+    "marks": "Marks",
+    "comment": "Comment (optional)",
+    "commentPlaceholder": "Any notes about this game…",
+    "deleteGame": "Delete game",
+    "deleteGameConfirm": "Delete this game?"
+  },
+  "notes": {
+    "title": "Match Notes",
+    "placeholder": "Add notes about this match or click the sparkle icon for AI-generated comment...",
+    "generateAI": "Generate with AI"
+  },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "matchWins": "Match wins",
+    "gameWins": "Game wins",
+    "gamesPlayed": "Games played",
+    "totalPoints": "Total points"
+  },
+  "playerSearch": {
+    "label": "Players",
+    "placeholder": "Search by name or username...",
+    "noResults": "No players found."
+  },
+  "sports": {
+    "table_tennis": "Table Tennis",
+    "football": "Football",
+    "basketball": "Basketball",
+    "tennis": "Tennis",
+    "badminton": "Badminton",
+    "volleyball": "Volleyball",
+    "pool": "Pool / Snooker",
+    "darts": "Darts",
+    "chess": "Chess",
+    "other": "Other"
+  },
+  "duration": {
+    "hours": "{hours}h {minutes}m",
+    "minutes": "{minutes}m",
+    "lessThanMinute": "<1m"
+  }
+}

@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Loader2, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -17,6 +18,7 @@ type Props = {
 
 export function PlayerSelector({ groupId, matchId, members }: Props) {
   const router = useRouter();
+  const t = useTranslations();
   const [isPending, startTransition] = useTransition();
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
 
@@ -79,10 +81,10 @@ export function PlayerSelector({ groupId, matchId, members }: Props) {
 
       {members.length === 0 && (
         <p className="text-sm text-muted-foreground">
-          No members in this group yet.
+          {t('matches.noMembers')}
         </p>
       )}
-
+      
       <div className="safe-bottom">
         <Button
           onClick={handleConfirm}
@@ -91,12 +93,12 @@ export function PlayerSelector({ groupId, matchId, members }: Props) {
         >
           {isPending && <Loader2 className="animate-spin" />}
           {isPending
-            ? "Saving…"
-            : `Confirm ${selectedIds.size > 0 ? `(${selectedIds.size})` : ""}`}
+            ? t('common.saving')
+            : `${t('common.confirm')} ${selectedIds.size > 0 ? `(${selectedIds.size})` : ""}`}
         </Button>
         {selectedIds.size > 0 && selectedIds.size < 2 && (
           <p className="mt-2 text-center text-xs text-muted-foreground sm:text-left">
-            Select at least 2 players
+            {t('matches.selectAtLeast')}
           </p>
         )}
       </div>

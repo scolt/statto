@@ -2,6 +2,7 @@
 
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Play, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { startMatch } from "@/features/matches";
@@ -12,6 +13,7 @@ type Props = {
 
 export function StartMatchTimerButton({ matchId }: Props) {
   const router = useRouter();
+  const t = useTranslations();
   const [isPending, startTransition] = useTransition();
 
   function handleStart() {
@@ -28,7 +30,7 @@ export function StartMatchTimerButton({ matchId }: Props) {
       ) : (
         <Play className="size-3.5" />
       )}
-      {isPending ? "Starting…" : "Start Match"}
+      {isPending ? t('timer.starting') : t('timer.start')}
     </Button>
   );
 }

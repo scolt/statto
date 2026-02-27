@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import {
   Tooltip,
   TooltipContent,
@@ -7,17 +8,19 @@ import {
 
 type Column = {
   emoji: string;
-  tooltip: string;
+  tooltipKey: string;
 };
 
 const COLUMNS: Column[] = [
-  { emoji: "🏆", tooltip: "Match wins" },
-  { emoji: "⚡", tooltip: "Game wins" },
-  { emoji: "🎮", tooltip: "Games played" },
-  { emoji: "🎯", tooltip: "Total points" },
+  { emoji: "🏆", tooltipKey: "leaderboard.matchWins" },
+  { emoji: "⚡", tooltipKey: "leaderboard.gameWins" },
+  { emoji: "🎮", tooltipKey: "leaderboard.gamesPlayed" },
+  { emoji: "🎯", tooltipKey: "leaderboard.totalPoints" },
 ];
 
-export function StatsHeader() {
+export async function StatsHeader() {
+  const t = await getTranslations();
+
   return (
     <TooltipProvider>
       <div className="grid grid-cols-[1.5rem_1fr_repeat(4,2rem)] items-center gap-1.5 border-b bg-muted/50 px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground sm:grid-cols-[2rem_1fr_repeat(4,2.5rem)] sm:gap-2 sm:px-4 sm:text-xs">
@@ -29,7 +32,7 @@ export function StatsHeader() {
               <span className="cursor-help text-center">{col.emoji}</span>
             </TooltipTrigger>
             <TooltipContent>
-              <p className="text-xs">{col.tooltip}</p>
+              <p className="text-xs">{t(col.tooltipKey as keyof IntlMessages)}</p>
             </TooltipContent>
           </Tooltip>
         ))}

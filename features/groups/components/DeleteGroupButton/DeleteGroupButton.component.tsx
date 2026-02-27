@@ -2,6 +2,7 @@
 
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Trash2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { deleteGroup } from "@/features/groups/actions/delete-group";
@@ -12,14 +13,11 @@ type Props = {
 
 export function DeleteGroupButton({ groupId }: Props) {
   const router = useRouter();
+  const t = useTranslations();
   const [isPending, startTransition] = useTransition();
 
   function handleDelete() {
-    if (
-      !confirm(
-        "Delete this group? All matches and games will be permanently deleted."
-      )
-    ) {
+    if (!confirm(t('groups.deleteGroupConfirm'))) {
       return;
     }
 

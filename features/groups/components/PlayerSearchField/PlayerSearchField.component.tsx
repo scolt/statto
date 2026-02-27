@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { X, Loader2, Search } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
@@ -18,6 +19,7 @@ type Props = {
 };
 
 export function PlayerSearchField({ selectedPlayers, onAdd, onRemove }: Props) {
+  const t = useTranslations();
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState<PlayerSearchResult[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -72,7 +74,7 @@ export function PlayerSearchField({ selectedPlayers, onAdd, onRemove }: Props) {
 
   return (
     <div className="space-y-3">
-      <Label>Players</Label>
+      <Label>{t('playerSearch.label')}</Label>
 
       {selectedPlayers.length > 0 && (
         <div className="flex flex-wrap gap-2">
@@ -98,7 +100,7 @@ export function PlayerSearchField({ selectedPlayers, onAdd, onRemove }: Props) {
           value={query}
           onChange={(e) => handleSearch(e.target.value)}
           onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
-          placeholder="Search by name or username..."
+          placeholder={t('playerSearch.placeholder')}
           className="pl-9 pr-9"
         />
         {isSearching && (
@@ -145,7 +147,7 @@ export function PlayerSearchField({ selectedPlayers, onAdd, onRemove }: Props) {
           suggestions.length === 0 &&
           query.trim().length >= 2 && (
             <div className="absolute z-10 mt-1.5 w-full rounded-xl border bg-popover px-3 py-3 text-center text-sm text-muted-foreground shadow-lg">
-              No players found.
+              {t('playerSearch.noResults')}
             </div>
           )}
       </div>

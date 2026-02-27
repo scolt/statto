@@ -23,7 +23,7 @@ export type PlayerStats = {
 export async function getGroupPlayerStats(
   groupId: number
 ): Promise<PlayerStats[]> {
-  const matches = await findMatchIdsByGroupId(groupId);
+  const matches = await findMatchIdsByGroupId(groupId, { onlyCompleted: true });
   if (matches.length === 0) return [];
 
   const matchIds = matches.map((m) => m.id);

@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { getMatchesForGroup } from "@/features/matches/queries/get-matches-for-group";
 import { MatchCard } from "../MatchCard";
 
@@ -6,16 +7,19 @@ type Props = {
 };
 
 export async function MatchList({ groupId }: Props) {
-  const matches = await getMatchesForGroup(groupId);
+  const [matches, t] = await Promise.all([
+    getMatchesForGroup(groupId),
+    getTranslations(),
+  ]);
 
   if (matches.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed py-12 text-center">
         <p className="text-sm font-medium text-muted-foreground">
-          No matches yet
+          {t('matches.noMatches')}
         </p>
         <p className="mt-1 text-xs text-muted-foreground/70">
-          Start a new match to get going!
+          {t('matches.noMatchesHint')}
         </p>
       </div>
     );

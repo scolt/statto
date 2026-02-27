@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Check, Loader2, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -39,6 +40,7 @@ export function EditProfileForm({
   initialNickname,
 }: Props) {
   const router = useRouter();
+  const t = useTranslations();
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState<string | undefined>();
   const [successMessage, setSuccessMessage] = useState<string | undefined>();
@@ -140,7 +142,7 @@ export function EditProfileForm({
           control={form.control}
           name="name"
           rules={{
-            required: "Name is required",
+            required: t('profile.nameRequired'),
             maxLength: {
               value: 255,
               message: "Name must be 255 characters or fewer",
@@ -149,21 +151,21 @@ export function EditProfileForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel>
-                Name <span className="text-destructive">*</span>
+                {t('profile.name')} <span className="text-destructive">*</span>
               </FormLabel>
               <FormControl>
-                <Input placeholder="Your display name" {...field} />
+                <Input placeholder={t('profile.namePlaceholder')} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-
+        
         <FormField
           control={form.control}
           name="nickname"
           rules={{
-            required: "Nickname is required",
+            required: t('profile.nicknameRequired'),
             maxLength: {
               value: 100,
               message: "Nickname must be 100 characters or fewer",
@@ -177,12 +179,12 @@ export function EditProfileForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel>
-                Nickname <span className="text-destructive">*</span>
+                {t('profile.nickname')} <span className="text-destructive">*</span>
               </FormLabel>
               <FormControl>
                 <div className="relative">
                   <Input
-                    placeholder="Your unique nickname"
+                    placeholder={t('profile.nicknamePlaceholder')}
                     {...field}
                     className="pr-9"
                   />
@@ -199,14 +201,14 @@ export function EditProfileForm({
               </FormControl>
               {nicknameStatus === "taken" && (
                 <p className="text-sm text-destructive">
-                  This nickname is already taken
+                  {t('profile.nicknameTaken')}
                 </p>
               )}
               {nicknameStatus === "available" && (
-                <p className="text-sm text-green-600">Available!</p>
+                <p className="text-sm text-green-600">{t('profile.nicknameAvailable')}</p>
               )}
               <FormDescription>
-                Must be unique. Others will see this in matches and groups.
+                {t('profile.nicknameHint')}
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -223,14 +225,14 @@ export function EditProfileForm({
             {successMessage}
           </div>
         )}
-
+        
         <Button
           type="submit"
           disabled={isPending || nicknameStatus === "taken"}
           className="w-full sm:w-auto"
         >
           {isPending && <Loader2 className="animate-spin" />}
-          {isPending ? "Saving…" : "Save Changes"}
+          {isPending ? t('common.saving') : t('profile.saveChanges')}
         </Button>
       </form>
     </Form>

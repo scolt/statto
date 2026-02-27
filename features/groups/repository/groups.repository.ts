@@ -3,6 +3,7 @@ import { groupsTable } from "@/lib/db/schemas/groups";
 import { playersGroupsTable } from "@/lib/db/schemas/players-groups";
 import { playersTable } from "@/lib/db/schemas/players";
 import { usersTable } from "@/lib/db/schemas/users";
+import { sportsTable } from "@/lib/db/schemas/sports";
 import { eq, and, inArray } from "drizzle-orm";
 
 // --- Group CRUD ---
@@ -10,6 +11,7 @@ import { eq, and, inArray } from "drizzle-orm";
 export async function insertGroup(data: {
   name: string;
   description: string | null;
+  sportId: number | null;
 }): Promise<number> {
   const [result] = await db.insert(groupsTable).values(data);
   return result.insertId;
@@ -17,7 +19,7 @@ export async function insertGroup(data: {
 
 export async function updateGroupById(
   groupId: number,
-  data: { name: string; description: string | null }
+  data: { name: string; description: string | null; sportId: number | null }
 ): Promise<void> {
   await db
     .update(groupsTable)
@@ -35,8 +37,15 @@ export async function findGroupById(groupId: number) {
       id: groupsTable.id,
       name: groupsTable.name,
       description: groupsTable.description,
+      sport: {
+        id: sportsTable.id,
+        name: sportsTable.name,
+        slug: sportsTable.slug,
+        icon: sportsTable.icon,
+      },
     })
     .from(groupsTable)
+    .leftJoin(sportsTable, eq(groupsTable.sportId, sportsTable.id))
     .where(eq(groupsTable.id, groupId))
     .limit(1);
 
@@ -75,6 +84,12 @@ export async function findGroupsByUserExternalId(externalId: string) {
       id: groupsTable.id,
       name: groupsTable.name,
       description: groupsTable.description,
+      sport: {
+        id: sportsTable.id,
+        name: sportsTable.name,
+        slug: sportsTable.slug,
+        icon: sportsTable.icon,
+      },
     })
     .from(groupsTable)
     .innerJoin(
@@ -83,6 +98,7 @@ export async function findGroupsByUserExternalId(externalId: string) {
     )
     .innerJoin(playersTable, eq(playersGroupsTable.playerId, playersTable.id))
     .innerJoin(usersTable, eq(playersTable.userId, usersTable.id))
+    .leftJoin(sportsTable, eq(groupsTable.sportId, sportsTable.id))
     .where(eq(usersTable.externalId, externalId));
 }
 

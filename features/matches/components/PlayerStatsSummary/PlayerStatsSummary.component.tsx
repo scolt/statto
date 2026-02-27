@@ -1,9 +1,12 @@
+"use client";
+
 import { Trophy, Minus } from "lucide-react";
-import type { GameWithDetails, MatchPlayer } from "@/features/matches";
+import type { GameWithDetails, MatchPlayer, MatchStatus } from "@/features/matches";
 
 type Props = {
   players: MatchPlayer[];
   games: GameWithDetails[];
+  status: MatchStatus;
 };
 
 type PlayerStats = {
@@ -57,7 +60,7 @@ function computeStats(
 }
 
 /* ── 2-player head-to-head duel view ────────────────────────── */
-function DuelSummary({ stats }: { stats: PlayerStats[] }) {
+function DuelSummary({ stats, isDone }: { stats: PlayerStats[]; isDone: boolean }) {
   const [a, b] = stats;
 
   const aLeading = a.wins > b.wins;
@@ -76,7 +79,7 @@ function DuelSummary({ stats }: { stats: PlayerStats[] }) {
             {a.nickname}
           </p>
           <div className="flex flex-row gap-2 items-center">
-            {aLeading && (
+            {isDone && aLeading && (
                 <Trophy className="size-6 text-yellow-500" />
             )}
             <span
@@ -110,7 +113,7 @@ function DuelSummary({ stats }: { stats: PlayerStats[] }) {
             {b.nickname}
           </p>
           <div className="flex flex-row gap-2 items-center">
-            {bLeading && (
+            {isDone && bLeading && (
                 <Trophy className="size-6 text-yellow-500" />
             )}
             <span
@@ -144,7 +147,7 @@ function DuelSummary({ stats }: { stats: PlayerStats[] }) {
 }
 
 /* ── Multi-player grid view (3+) ───────────────────────────── */
-function MultiPlayerSummary({ stats }: { stats: PlayerStats[] }) {
+function MultiPlayerSummary({ stats, isDone }: { stats: PlayerStats[]; isDone: boolean }) {
   const maxWins = Math.max(...stats.map((s) => s.wins));
   const hasDraw = stats.some((s) => s.draws > 0);
 
@@ -161,6 +164,9 @@ function MultiPlayerSummary({ stats }: { stats: PlayerStats[] }) {
             }`}
           >
             <p className="mb-1.5 truncate text-xs font-medium text-muted-foreground">
+              {isDone && isLeader && (
+                <Trophy className="inline-block mr-1 size-3.5 text-yellow-500 align-text-bottom" />
+              )}
               {stat.nickname}
             </p>
             <div className="flex items-center justify-center gap-1.5 font-mono text-base sm:text-lg">
@@ -191,15 +197,15 @@ function MultiPlayerSummary({ stats }: { stats: PlayerStats[] }) {
 }
 
 /* ── Main export ────────────────────────────────────────────── */
-export function PlayerStatsSummary({ players, games }: Props) {
+export function PlayerStatsSummary({ players, games, status }: Props) {
   if (games.length === 0) return null;
 
   const stats = computeStats(players, games);
   const isTwoPlayer = stats.length === 2;
 
   return isTwoPlayer ? (
-    <DuelSummary stats={stats} />
+    <DuelSummary stats={stats} isDone={status === "done"} />
   ) : (
-    <MultiPlayerSummary stats={stats} />
+    <MultiPlayerSummary stats={stats} isDone={status === "done"} />
   );
 }

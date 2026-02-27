@@ -36,6 +36,13 @@
       "when": 1772000000000,
       "tag": "0004_timer_duration",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1772100000000,
+      "tag": "0005_sports",
+      "breakpoints": true
     }
   ]
 }

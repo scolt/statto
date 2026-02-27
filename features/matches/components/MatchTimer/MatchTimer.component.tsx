@@ -1,19 +1,23 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Timer, CheckCircle, Clock, Pause, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { MatchStatus } from "@/features/matches";
-import { pauseMatch, resumeMatch } from "@/features/matches";
 
 type Props = {
-  matchId: number;
   /** Accumulated seconds already stored in DB. */
   duration: number;
   /** Timestamp (ISO string) of the current running segment, null when paused/stopped. */
   timerStartedAt: string | null;
   status: MatchStatus;
+  /** Whether a pause/resume transition is in-flight (disables the button). */
+  isPending?: boolean;
+  /** Show pause/resume controls. False for spectators. */
+  showControls?: boolean;
+  onPause: () => void;
+  onResume: () => void;
 };
 
 function formatElapsed(seconds: number): string {
@@ -26,9 +30,8 @@ function formatElapsed(seconds: number): string {
   return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
 }
 
-export function MatchTimer({ matchId, duration, timerStartedAt, status }: Props) {
-  const router = useRouter();
-  const [isPending, startTransition] = useTransition();
+export function MatchTimer({ duration, timerStartedAt, status, isPending = false, showControls = true, onPause, onResume }: Props) {
+  const t = useTranslations();
 
   // Live-tick counter: base (duration) + current running segment
   const [elapsed, setElapsed] = useState(() => {
@@ -60,20 +63,6 @@ export function MatchTimer({ matchId, duration, timerStartedAt, status }: Props)
     };
   }, [duration, timerStartedAt, status]);
 
-  function handlePause() {
-    startTransition(async () => {
-      await pauseMatch(matchId);
-      router.refresh();
-    });
-  }
-
-  function handleResume() {
-    startTransition(async () => {
-      await resumeMatch(matchId);
-      router.refresh();
-    });
-  }
-
   const isRunning = status === "in_progress";
   const isPaused = status === "paused";
   const isDone = status === "done";
@@ -90,12 +79,12 @@ export function MatchTimer({ matchId, duration, timerStartedAt, status }: Props)
   );
 
   const label = isDone
-    ? "Completed"
+    ? t('matches.statusLabel.done')
     : isRunning
-      ? "In Progress"
+      ? t('matches.statusLabel.in_progress')
       : isPaused
-        ? "Paused"
-        : "Waiting to Start";
+        ? t('matches.statusLabel.paused')
+        : t('matches.statusLabel.new');
 
   const bgClass = isRunning
     ? "bg-primary/5 border-primary/20"
@@ -115,14 +104,14 @@ export function MatchTimer({ matchId, duration, timerStartedAt, status }: Props)
         </p>
       </div>
 
-      {/* Pause / Resume controls — only visible while match is active */}
-      {(isRunning || isPaused) && (
+      {/* Pause / Resume controls — only visible while match is active and user is a participant */}
+      {(isRunning || isPaused) && showControls && (
         <Button
           variant="ghost"
           size="icon"
           className="size-9 shrink-0"
           disabled={isPending}
-          onClick={isRunning ? handlePause : handleResume}
+          onClick={isRunning ? onPause : onResume}
           aria-label={isRunning ? "Pause timer" : "Resume timer"}
         >
           {isRunning ? (

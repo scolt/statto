@@ -3,6 +3,7 @@
 import { useCallback, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,8 @@ import {
 import { updateGroup } from "../../actions/update-group";
 import { PlayerSearchField } from "../PlayerSearchField";
 import type { PlayerSearchResult } from "@/features/players";
+import { SportSelector } from "@/features/sports";
+import type { Sport } from "@/features/sports";
 
 type EditGroupFormValues = {
   name: string;
@@ -31,6 +34,8 @@ type Props = {
   initialName: string;
   initialDescription: string;
   initialPlayers: PlayerSearchResult[];
+  initialSportId: number | null;
+  sports: Sport[];
 };
 
 export function EditGroupForm({
@@ -38,12 +43,16 @@ export function EditGroupForm({
   initialName,
   initialDescription,
   initialPlayers,
+  initialSportId,
+  sports,
 }: Props) {
   const router = useRouter();
+  const t = useTranslations();
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState<string | undefined>();
   const [selectedPlayers, setSelectedPlayers] =
     useState<PlayerSearchResult[]>(initialPlayers);
+  const [selectedSportId, setSelectedSportId] = useState<number | null>(initialSportId);
 
   const form = useForm<EditGroupFormValues>({
     defaultValues: {
@@ -68,6 +77,7 @@ export function EditGroupForm({
         name: values.name,
         description: values.description,
         playerIds: selectedPlayers.map((p) => p.id),
+        sportId: selectedSportId,
       });
 
       if (result.error) {
@@ -85,29 +95,29 @@ export function EditGroupForm({
         <FormField
           control={form.control}
           name="name"
-          rules={{ required: "Group name is required" }}
+          rules={{ required: t('groups.groupNameRequired') }}
           render={({ field }) => (
             <FormItem>
               <FormLabel>
-                Group Name <span className="text-destructive">*</span>
+                {t('groups.groupName')} <span className="text-destructive">*</span>
               </FormLabel>
               <FormControl>
-                <Input placeholder="e.g. Friday Night Football" {...field} />
+                <Input placeholder={t('groups.groupNamePlaceholder')} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-
+        
         <FormField
           control={form.control}
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>{t('groups.description')}</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="What's this group about?"
+                  placeholder={t('groups.descriptionPlaceholder')}
                   rows={3}
                   className="resize-none"
                   {...field}
@@ -117,6 +127,15 @@ export function EditGroupForm({
             </FormItem>
           )}
         />
+        
+        <FormItem>
+          <FormLabel>{t('groups.sport')}</FormLabel>
+          <SportSelector
+            sports={sports}
+            value={selectedSportId}
+            onChange={setSelectedSportId}
+          />
+        </FormItem>
 
         <PlayerSearchField
           selectedPlayers={selectedPlayers}
@@ -131,14 +150,14 @@ export function EditGroupForm({
         <div className="flex gap-3 pt-2">
           <Button type="submit" disabled={isPending} className="flex-1 sm:flex-none">
             {isPending && <Loader2 className="animate-spin" />}
-            {isPending ? "Saving…" : "Save Changes"}
+            {isPending ? t('common.saving') : t('profile.saveChanges')}
           </Button>
           <Button
             type="button"
             variant="outline"
             onClick={() => router.push(`/groups/${groupId}`)}
           >
-            Cancel
+            {t('common.cancel')}
           </Button>
         </div>
       </form>

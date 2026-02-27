@@ -1,0 +1,150 @@
+{
+  "common": {
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "delete": "Удалить",
+    "edit": "Изменить",
+    "loading": "Загрузка...",
+    "error": "Что-то пошло не так",
+    "back": "Назад",
+    "confirm": "Подтвердить",
+    "saved": "Сохранено",
+    "creating": "Создание…",
+    "saving": "Сохранение…",
+    "deleting": "Удаление…"
+  },
+  "auth": {
+    "signIn": "Войти",
+    "signUp": "Регистрация",
+    "signOut": "Выйти"
+  },
+  "landing": {
+    "tagline": "Отслеживайте свою статистику, соревнуйтесь с друзьями и раз и навсегда определите победителя.",
+    "welcomeBack": "С возвращением,"
+  },
+  "profile": {
+    "title": "Профиль",
+    "editProfile": "Редактировать профиль",
+    "accountInfo": "Информация об аккаунте",
+    "provider": "Провайдер",
+    "memberSince": "Участник с",
+    "favouriteSports": "Любимые виды спорта",
+    "name": "Имя",
+    "namePlaceholder": "Ваше отображаемое имя",
+    "nameRequired": "Имя обязательно",
+    "nickname": "Никнейм",
+    "nicknamePlaceholder": "Ваш уникальный никнейм",
+    "nicknameRequired": "Никнейм обязателен",
+    "nicknameHint": "Должен быть уникальным. Другие увидят его в матчах и группах.",
+    "nicknameTaken": "Этот никнейм уже занят",
+    "nicknameAvailable": "Доступен!",
+    "saveChanges": "Сохранить изменения",
+    "profileUpdated": "Профиль обновлён!",
+    "language": "Язык",
+    "languageHint": "Выберите предпочтительный язык интерфейса."
+  },
+  "groups": {
+    "title": "Ваши группы",
+    "createGroup": "Создать группу",
+    "editGroup": "Редактировать группу",
+    "newGroup": "Новая группа",
+    "noGroups": "Пока нет групп",
+    "noGroupsHint": "Создайте первую, чтобы начать вести статистику!",
+    "groupName": "Название группы",
+    "groupNamePlaceholder": "напр. Пятничный футбол",
+    "groupNameRequired": "Название группы обязательно",
+    "description": "Описание",
+    "descriptionPlaceholder": "О чём эта группа?",
+    "sport": "Вид спорта",
+    "players": "Игроки",
+    "deleteGroup": "Удалить группу",
+    "deleteGroupConfirm": "Удалить эту группу? Все матчи и игры будут удалены безвозвратно."
+  },
+  "matches": {
+    "title": "Матчи",
+    "newMatch": "Новый матч",
+    "noMatches": "Пока нет матчей",
+    "noMatchesHint": "Начните новый матч!",
+    "match": "Матч",
+    "matchNumber": "Матч #{number}",
+    "selectPlayers": "Выбор игроков",
+    "selectPlayersHint": "Выберите, кто участвует в этом матче",
+    "noMembers": "В этой группе пока нет участников.",
+    "selectAtLeast": "Выберите минимум 2 игроков",
+    "deleteMatch": "Удалить матч",
+    "deleteMatchConfirm": "Удалить этот матч? Все игры и очки будут удалены безвозвратно.",
+    "status": {
+      "new": "Новый",
+      "in_progress": "Идёт",
+      "paused": "Пауза",
+      "done": "Завершён"
+    },
+    "statusLabel": {
+      "new": "Ожидание начала",
+      "in_progress": "В процессе",
+      "paused": "На паузе",
+      "done": "Завершён"
+    }
+  },
+  "timer": {
+    "start": "Начать матч",
+    "starting": "Запуск…",
+    "pause": "Пауза",
+    "resume": "Продолжить",
+    "complete": "Завершить",
+    "completing": "Завершение…",
+    "completeConfirm": "Вы уверены, что хотите завершить этот матч?",
+    "reopen": "Возобновить матч",
+    "reopening": "Возврат…",
+    "reopenConfirm": "Вернуть матч в состояние «В процессе»?"
+  },
+  "games": {
+    "title": "Игры",
+    "noGames": "Пока нет игр",
+    "noGamesHint": "Добавьте результат игры!",
+    "reportGame": "Добавить игру",
+    "saveGame": "Сохранить игру",
+    "game": "Игра",
+    "gameOf": "Игра {current} из {total}",
+    "scores": "Счёт",
+    "marks": "Отметки",
+    "comment": "Комментарий (необязательно)",
+    "commentPlaceholder": "Заметки об этой игре…",
+    "deleteGame": "Удалить игру",
+    "deleteGameConfirm": "Удалить эту игру?"
+  },
+  "notes": {
+    "title": "Заметки к матчу",
+    "placeholder": "Добавьте заметки к матчу или нажмите на иконку искры для AI-генерации...",
+    "generateAI": "Сгенерировать с AI"
+  },
+  "leaderboard": {
+    "title": "Таблица лидеров",
+    "matchWins": "Победы в матчах",
+    "gameWins": "Победы в играх",
+    "gamesPlayed": "Игр сыграно",
+    "totalPoints": "Всего очков"
+  },
+  "playerSearch": {
+    "label": "Игроки",
+    "placeholder": "Поиск по имени или никнейму...",
+    "noResults": "Игроки не найдены."
+  },
+  "sports": {
+    "table_tennis": "Настольный теннис",
+    "football": "Футбол",
+    "basketball": "Баскетбол",
+    "tennis": "Теннис",
+    "badminton": "Бадминтон",
+    "volleyball": "Волейбол",
+    "pool": "Бильярд / Снукер",
+    "darts": "Дартс",
+    "chess": "Шахматы",
+    "other": "Другое"
+  },
+  "duration": {
+    "hours": "{hours}ч {minutes}м",
+    "minutes": "{minutes}м",
+    "lessThanMinute": "<1м"
+  }
+}

@@ -5,11 +5,13 @@ import {
   findGroupMembers,
   findGroupMembersWithUsername,
 } from "../repository/groups.repository";
+import type { Sport } from "@/features/sports";
 
 export type GroupDetail = {
   id: number;
   name: string;
   description: string | null;
+  sport: Sport | null;
 };
 
 export type GroupMember = {
@@ -18,7 +20,11 @@ export type GroupMember = {
 };
 
 export async function getGroupById(groupId: number): Promise<GroupDetail | null> {
-  return findGroupById(groupId);
+  const row = await findGroupById(groupId);
+  if (!row) return null;
+  // leftJoin returns null fields when no sport — normalise to null object
+  const sport = row.sport?.id ? (row.sport as Sport) : null;
+  return { ...row, sport };
 }
 
 export async function getGroupMembers(groupId: number): Promise<GroupMember[]> {

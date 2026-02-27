@@ -29,6 +29,7 @@ export function ScoreInputList({ players, form }: Props) {
             type="number"
             min={0}
             className="w-20 text-center"
+            onFocus={(e) => e.target.select()}
             {...form.register(`scores.${player.id}`, { valueAsNumber: true })}
           />
         </div>
