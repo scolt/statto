@@ -21,7 +21,7 @@ export function MatchActions({ matchId, groupId, players, marks, status }: Props
     );
   }
 
-  if (status === "in_progress") {
+  if (status === "in_progress" || status === "paused") {
     return (
       <div className="mb-6 flex flex-wrap gap-2">
         <ReportGameButton

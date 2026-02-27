@@ -8,6 +8,7 @@ import {
   updateMatchComment,
   insertMatchPlayers,
   findMatchPlayers,
+  findMatchById,
   findGamesByMatchId,
   findScoresByGameIds,
   findMarksByGameIds
@@ -29,9 +30,48 @@ export async function startMatch(matchId: number): Promise<void> {
     redirect("/auth/login");
   }
 
+  const now = new Date();
   await updateMatchStatus(matchId, {
     status: "in_progress",
-    startedAt: new Date(),
+    startedAt: now,
+    duration: 0,
+    timerStartedAt: now,
+  });
+}
+
+export async function pauseMatch(matchId: number): Promise<void> {
+  const session = await auth0.getSession();
+  if (!session?.user) {
+    redirect("/auth/login");
+  }
+
+  const match = await findMatchById(matchId);
+  if (!match || match.status !== "in_progress") return;
+
+  // Add the current running-segment to the stored duration
+  const segmentSeconds = match.timerStartedAt
+    ? Math.floor((Date.now() - match.timerStartedAt.getTime()) / 1000)
+    : 0;
+
+  await updateMatchStatus(matchId, {
+    status: "paused",
+    duration: (match.duration ?? 0) + segmentSeconds,
+    timerStartedAt: null,
+  });
+}
+
+export async function resumeMatch(matchId: number): Promise<void> {
+  const session = await auth0.getSession();
+  if (!session?.user) {
+    redirect("/auth/login");
+  }
+
+  const match = await findMatchById(matchId);
+  if (!match || match.status !== "paused") return;
+
+  await updateMatchStatus(matchId, {
+    status: "in_progress",
+    timerStartedAt: new Date(),
   });
 }
 
@@ -44,9 +84,19 @@ export async function completeMatch(
     redirect("/auth/login");
   }
 
+  const match = await findMatchById(matchId);
+
+  // Flush any running segment into duration before completing
+  const segmentSeconds =
+    match?.timerStartedAt
+      ? Math.floor((Date.now() - match.timerStartedAt.getTime()) / 1000)
+      : 0;
+
   await updateMatchStatus(matchId, {
     status: "done",
     finishedAt: new Date(),
+    duration: (match?.duration ?? 0) + segmentSeconds,
+    timerStartedAt: null,
     comment: comment?.trim() || null,
   });
 }
@@ -106,9 +156,11 @@ export async function uncompleteMatch(matchId: number): Promise<void> {
     redirect("/auth/login");
   }
 
+  // Resume the timer from where it was left off
   await updateMatchStatus(matchId, {
     status: "in_progress",
     finishedAt: null,
+    timerStartedAt: new Date(),
   });
 }
 

@@ -18,7 +18,9 @@ export type MatchListItem = {
   date: Date;
   startedAt: Date | null;
   finishedAt: Date | null;
-  status: "new" | "in_progress" | "done";
+  /** Accumulated timer duration in seconds. */
+  duration: number;
+  status: "new" | "in_progress" | "paused" | "done";
   comment: string | null;
   playerResults: PlayerMatchResult[];
 };

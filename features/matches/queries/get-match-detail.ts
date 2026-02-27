@@ -7,7 +7,7 @@ import {
   findMarksByGameIds,
 } from "../repository/matches.repository";
 
-export type MatchStatus = "new" | "in_progress" | "done";
+export type MatchStatus = "new" | "in_progress" | "paused" | "done";
 
 export type MatchDetail = {
   id: number;
@@ -15,6 +15,10 @@ export type MatchDetail = {
   date: Date;
   startedAt: Date | null;
   finishedAt: Date | null;
+  /** Accumulated timer duration in seconds (paused segments included). */
+  duration: number;
+  /** Timestamp of the currently-running segment (null when paused/stopped). */
+  timerStartedAt: Date | null;
   status: MatchStatus;
   comment: string | null;
 };

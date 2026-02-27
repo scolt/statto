@@ -6,15 +6,14 @@ import { Trash2, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { deleteGame } from "@/features/matches";
-import type { GameWithDetails, MatchStatus } from "@/features/matches";
+import type { GameWithDetails } from "@/features/matches";
 
 type Props = {
   game: GameWithDetails;
   index: number;
-  matchStatus: MatchStatus;
 };
 
-function DuelGameRow({ game, index, matchStatus }: Props) {
+function DuelGameRow({ game, index }: Props) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [a, b] = game.scores;
@@ -91,22 +90,20 @@ function DuelGameRow({ game, index, matchStatus }: Props) {
         </div>
 
         {/* Delete button — visible on hover / always on touch */}
-        {matchStatus !== "done" && (
-          <Button
-            variant="ghost"
-            size="icon"
-            className="ml-1.5 size-7 shrink-0 opacity-50 transition-opacity hover:opacity-100 group-hover:opacity-100 text-destructive hover:text-destructive"
-            onClick={handleDelete}
-            disabled={isPending}
-            aria-label="Remove game"
-          >
-            {isPending ? (
-              <Loader2 className="size-3.5 animate-spin" />
-            ) : (
-              <Trash2 className="size-3.5" />
-            )}
-          </Button>
-        )}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="ml-1.5 size-7 shrink-0 opacity-50 transition-opacity hover:opacity-100 group-hover:opacity-100 text-destructive hover:text-destructive"
+          onClick={handleDelete}
+          disabled={isPending}
+          aria-label="Remove game"
+        >
+          {isPending ? (
+            <Loader2 className="size-3.5 animate-spin" />
+          ) : (
+            <Trash2 className="size-3.5" />
+          )}
+        </Button>
       </div>
 
       {/* Marks + Comment */}
@@ -140,7 +137,7 @@ function DuelGameRow({ game, index, matchStatus }: Props) {
   );
 }
 
-function MultiPlayerGameRow({ game, index, matchStatus }: Props) {
+function MultiPlayerGameRow({ game, index }: Props) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -216,22 +213,20 @@ function MultiPlayerGameRow({ game, index, matchStatus }: Props) {
         )}
 
         {/* Delete button */}
-        {matchStatus !== "done" && (
-          <Button
-            variant="ghost"
-            size="icon"
-            className="size-7 shrink-0 opacity-50 transition-opacity hover:opacity-100 group-hover:opacity-100 text-destructive hover:text-destructive"
-            onClick={handleDelete}
-            disabled={isPending}
-            aria-label="Remove game"
-          >
-            {isPending ? (
-              <Loader2 className="size-3.5 animate-spin" />
-            ) : (
-              <Trash2 className="size-3.5" />
-            )}
-          </Button>
-        )}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="size-7 shrink-0 opacity-50 transition-opacity hover:opacity-100 group-hover:opacity-100 text-destructive hover:text-destructive"
+          onClick={handleDelete}
+          disabled={isPending}
+          aria-label="Remove game"
+        >
+          {isPending ? (
+            <Loader2 className="size-3.5 animate-spin" />
+          ) : (
+            <Trash2 className="size-3.5" />
+          )}
+        </Button>
       </div>
 
       {/* Comment */}

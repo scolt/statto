@@ -1,4 +1,4 @@
-import { bigint, mysqlEnum, mysqlTable, serial, text, timestamp } from 'drizzle-orm/mysql-core';
+import { bigint, int, mysqlEnum, mysqlTable, serial, text, timestamp } from 'drizzle-orm/mysql-core';
 import { groupsTable } from './groups';
 
 export const matchesTable = mysqlTable('matches', {
@@ -9,7 +9,11 @@ export const matchesTable = mysqlTable('matches', {
   date: timestamp('date').notNull(),
   startedAt: timestamp('started_at'),
   finishedAt: timestamp('finished_at'),
-  status: mysqlEnum('status', ['new', 'in_progress', 'done'])
+  /** Accumulated timer duration in seconds. Updated on pause/complete. */
+  duration: int('duration').notNull().default(0),
+  /** Timestamp when the timer was last resumed (running segment start). Null when paused/stopped. */
+  timerStartedAt: timestamp('timer_started_at'),
+  status: mysqlEnum('status', ['new', 'in_progress', 'done', 'paused'])
     .notNull()
     .default('new'),
   comment: text(),

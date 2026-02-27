@@ -22,9 +22,11 @@ export async function insertMatch(groupId: number): Promise<number> {
 export async function updateMatchStatus(
   matchId: number,
   data: {
-    status: "new" | "in_progress" | "done";
+    status: "new" | "in_progress" | "paused" | "done";
     startedAt?: Date | null;
     finishedAt?: Date | null;
+    duration?: number;
+    timerStartedAt?: Date | null;
     comment?: string | null;
   }
 ): Promise<void> {
@@ -56,6 +58,8 @@ export async function findMatchById(matchId: number) {
       date: matchesTable.date,
       startedAt: matchesTable.startedAt,
       finishedAt: matchesTable.finishedAt,
+      duration: matchesTable.duration,
+      timerStartedAt: matchesTable.timerStartedAt,
       status: matchesTable.status,
       comment: matchesTable.comment,
     })
@@ -73,6 +77,7 @@ export async function findMatchesByGroupId(groupId: number) {
       date: matchesTable.date,
       startedAt: matchesTable.startedAt,
       finishedAt: matchesTable.finishedAt,
+      duration: matchesTable.duration,
       status: matchesTable.status,
       comment: matchesTable.comment,
     })

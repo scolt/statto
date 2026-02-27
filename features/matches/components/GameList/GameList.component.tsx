@@ -1,12 +1,11 @@
-import type { GameWithDetails, MatchStatus } from "@/features/matches";
+import type { GameWithDetails } from "@/features/matches";
 import { GameRow } from "./GameRow";
 
 type Props = {
   games: GameWithDetails[];
-  matchStatus: MatchStatus;
 };
 
-export function GameList({ games, matchStatus }: Props) {
+export function GameList({ games }: Props) {
   if (games.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed py-10 text-center">
@@ -27,7 +26,6 @@ export function GameList({ games, matchStatus }: Props) {
           key={game.id}
           game={game}
           index={index + 1}
-          matchStatus={matchStatus}
         />
       ))}
     </div>

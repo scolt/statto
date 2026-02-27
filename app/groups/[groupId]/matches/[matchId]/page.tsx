@@ -23,6 +23,7 @@ type Props = {
 const STATUS_BADGE: Record<string, { label: string; variant: "default" | "secondary" | "outline" }> = {
   new: { label: "New", variant: "outline" },
   in_progress: { label: "In Progress", variant: "default" },
+  paused: { label: "Paused", variant: "outline" },
   done: { label: "Completed", variant: "secondary" },
 };
 
@@ -80,8 +81,9 @@ export default async function MatchPage({ params }: Props) {
 
         {/* Timer */}
         <MatchTimer
-          startedAt={match.startedAt?.toISOString() ?? null}
-          finishedAt={match.finishedAt?.toISOString() ?? null}
+          matchId={match.id}
+          duration={match.duration}
+          timerStartedAt={match.timerStartedAt?.toISOString() ?? null}
           status={match.status}
         />
 
@@ -94,16 +96,16 @@ export default async function MatchPage({ params }: Props) {
           groupId={Number(groupId)}
           players={players}
           marks={marks}
-          status={match.status as "new" | "in_progress" | "done"}
+          status={match.status as "new" | "in_progress" | "paused" | "done"}
           initialComment={match.comment ?? ""}
         />
-
+        
         {/* Games list */}
         <section>
           <h2 className="mb-3 text-lg font-semibold">
             Games ({games.length})
           </h2>
-          <GameList games={games} matchStatus={match.status as "new" | "in_progress" | "done"} />
+          <GameList games={games} />
         </section>
       </div>
     </main>

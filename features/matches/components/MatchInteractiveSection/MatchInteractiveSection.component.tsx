@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { MessageSquare } from "lucide-react";
 import { MatchComment } from "../MatchComment";
 import { ReportGameButton } from "../MatchActions/ReportGameButton";
 import { CompleteMatchButton } from "../MatchActions/CompleteMatchButton";
@@ -47,7 +46,7 @@ export function MatchInteractiveSection({
     );
   }
 
-  if (status === "in_progress") {
+  if (status === "in_progress" || status === "paused") {
     return (
       <>
         <MatchComment
@@ -68,24 +67,14 @@ export function MatchInteractiveSection({
     );
   }
 
-  // status === "done" — show comment as read-only if it exists
+  // status === "done" — comment is still editable; games are still removable
   return (
     <>
-      {initialComment && (
-        <div className="mb-6">
-          <div className="flex items-center gap-2 mb-2">
-            <MessageSquare className="size-4 text-muted-foreground" />
-            <span className="text-sm font-medium text-muted-foreground">
-              Match Notes
-            </span>
-          </div>
-          <div className="rounded-xl border bg-muted/30 px-4 py-3">
-            <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-              {initialComment}
-            </p>
-          </div>
-        </div>
-      )}
+      <MatchComment
+        matchId={matchId}
+        initialComment={initialComment}
+        onChange={handleCommentChange}
+      />
       <div className="mb-6 flex flex-wrap gap-2">
         <UncompleteMatchButton matchId={matchId} />
       </div>

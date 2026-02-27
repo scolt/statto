@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Clock } from "lucide-react";
+import { Clock, Pause } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { MatchPlayerResults } from "./MatchPlayerResults";
 import type { MatchListItem } from "@/features/matches/queries/get-matches-for-group";
@@ -16,26 +16,21 @@ const STATUS_CONFIG: Record<
 > = {
   new: { label: "New", variant: "outline" },
   in_progress: { label: "Live", variant: "default" },
+  paused: { label: "Paused", variant: "outline" },
   done: { label: "Done", variant: "secondary" },
 };
 
-function formatDuration(startedAt: Date, finishedAt: Date): string {
-  const seconds = Math.floor(
-    (finishedAt.getTime() - startedAt.getTime()) / 1000
-  );
+function formatDuration(seconds: number): string {
   const hrs = Math.floor(seconds / 3600);
   const mins = Math.floor((seconds % 3600) / 60);
-
   if (hrs > 0) return `${hrs}h ${mins}m`;
-  return `${mins}m`;
+  if (mins > 0) return `${mins}m`;
+  return "<1m";
 }
 
 export function MatchCard({ match, index, groupId }: Props) {
   const badge = STATUS_CONFIG[match.status] ?? STATUS_CONFIG.new;
-  const duration =
-    match.startedAt && match.finishedAt
-      ? formatDuration(match.startedAt, match.finishedAt)
-      : null;
+  const showDuration = match.duration > 0;
 
   return (
     <Link href={`/groups/${groupId}/matches/${match.id}`}>
@@ -43,7 +38,13 @@ export function MatchCard({ match, index, groupId }: Props) {
         {/* Top row */}
         <div className="mb-2 flex items-center justify-between">
           <span className="text-sm font-semibold">Match #{index}</span>
-          <Badge variant={badge.variant} className="text-[10px]">
+          <Badge
+            variant={badge.variant}
+            className={`text-[10px] ${
+              match.status === "paused" ? "text-amber-600 border-amber-300" : ""
+            }`}
+          >
+            {match.status === "paused" && <Pause className="mr-1 size-2.5" />}
             {badge.label}
           </Badge>
         </div>
@@ -55,10 +56,10 @@ export function MatchCard({ match, index, groupId }: Props) {
             month: "short",
             day: "numeric",
           })}
-          {duration && (
+          {showDuration && (
             <span className="ml-2 inline-flex items-center gap-1">
               <Clock className="inline size-3" />
-              {duration}
+              {formatDuration(match.duration)}
             </span>
           )}
         </p>
