@@ -27,11 +27,10 @@ export async function MatchList({ groupId }: Props) {
 
   return (
     <div className="grid gap-3 sm:grid-cols-2">
-      {matches.map((match, idx) => (
+      {matches.map((match) => (
         <MatchCard
           key={match.id}
           match={match}
-          index={matches.length - idx}
           groupId={groupId}
         />
       ))}

@@ -33,7 +33,7 @@ export default async function GroupPage({ params }: Props) {
         <div className="mx-auto flex h-14 max-w-2xl items-center gap-3 px-4 sm:px-6">
           <Button variant="ghost" size="icon" asChild>
             <Link href="/" aria-label={t('common.back')}>
-              <ArrowLeft className="size-[18px]" />
+              <ArrowLeft className="size-4.5" />
             </Link>
           </Button>
 

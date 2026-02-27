@@ -7,7 +7,6 @@ import type { MatchListItem } from "@/features/matches/queries/get-matches-for-g
 
 type Props = {
   match: MatchListItem;
-  index: number;
   groupId: number;
 };
 
@@ -26,7 +25,7 @@ function formatDuration(seconds: number): { key: string; params?: { hours: numbe
   return { key: 'duration.lessThanMinute' };
 }
 
-export async function MatchCard({ match, index, groupId }: Props) {
+export async function MatchCard({ match, groupId }: Props) {
   const [t, locale] = await Promise.all([
     getTranslations(),
     getLocale(),
