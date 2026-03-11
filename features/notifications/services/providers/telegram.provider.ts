@@ -38,7 +38,7 @@ function formatMatchResult(payload: NotificationPayload): string {
   const duration = formatDuration(payload.duration);
   if (duration) {
     lines.push('');
-    lines.push(`⏱ Total games: ${duration}`);
+    lines.push(`⏱ Duration: ${duration}`);
   }
 
   if (payload.comment) {
