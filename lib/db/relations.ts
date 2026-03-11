@@ -10,6 +10,7 @@ import { gamesTable } from './schemas/games';
 import { gameScoresTable } from './schemas/game-scores';
 import { marksTable } from './schemas/marks';
 import { gameMarksTable } from './schemas/game-marks';
+import { groupNotificationsTable } from './schemas/group-notifications';
 
 // ── Users ──────────────────────────────────────────────
 export const usersRelations = relations(usersTable, ({ one }) => ({
@@ -43,6 +44,7 @@ export const groupsRelations = relations(groupsTable, ({ one, many }) => ({
   }),
   playersGroups: many(playersGroupsTable),
   matches: many(matchesTable),
+  notifications: many(groupNotificationsTable),
 }));
 
 // ── Players ↔ Groups (join table) ─────────────────────
@@ -115,5 +117,13 @@ export const gameMarksRelations = relations(gameMarksTable, ({ one }) => ({
   mark: one(marksTable, {
     fields: [gameMarksTable.markId],
     references: [marksTable.id],
+  }),
+}));
+
+// ── Group Notifications ───────────────────────────────
+export const groupNotificationsRelations = relations(groupNotificationsTable, ({ one }) => ({
+  group: one(groupsTable, {
+    fields: [groupNotificationsTable.groupId],
+    references: [groupsTable.id],
   }),
 }));

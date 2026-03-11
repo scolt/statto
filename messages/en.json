@@ -146,5 +146,26 @@
     "hours": "{hours}h {minutes}m",
     "minutes": "{minutes}m",
     "lessThanMinute": "<1m"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "addChannel": "Add Notification Channel",
+    "noChannels": "No notification channels configured",
+    "noChannelsHint": "Add a channel to receive match results automatically.",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "deleteConfirm": "Remove this notification channel?",
+    "provider": {
+      "telegram": "Telegram"
+    },
+    "telegram": {
+      "chatId": "Chat ID",
+      "chatIdPlaceholder": "e.g. -1001234567890",
+      "chatIdRequired": "Chat ID is required",
+      "instructions": "Add the Statto bot to your Telegram group, then paste the group's chat ID here."
+    },
+    "testSend": "Send Test",
+    "testSuccess": "Test notification sent!",
+    "testFailed": "Failed to send test notification"
   }
 }

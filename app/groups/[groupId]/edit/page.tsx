@@ -6,6 +6,7 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getGroupById, getGroupMembersWithUsername, EditGroupForm } from "@/features/groups";
 import { getSports } from "@/features/sports";
+import { getGroupNotifications, NotificationSettings } from "@/features/notifications";
 
 type Props = {
   params: Promise<{ groupId: string }>;
@@ -17,9 +18,10 @@ export default async function EditGroupPage({ params }: Props) {
 
   const { groupId } = await params;
 
-  const [group, sports, t] = await Promise.all([
+  const [group, sports, notifications, t] = await Promise.all([
     getGroupById(Number(groupId)),
     getSports(),
+    getGroupNotifications(Number(groupId)),
     getTranslations(),
   ]);
   if (!group) notFound();
@@ -48,6 +50,10 @@ export default async function EditGroupPage({ params }: Props) {
           initialSportId={group.sport?.id ?? null}
           sports={sports}
         />
+      
+        <div className="mt-8">
+          <NotificationSettings groupId={group.id} notifications={notifications} />
+        </div>
       </div>
     </main>
   );

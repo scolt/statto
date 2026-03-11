@@ -14,6 +14,8 @@ import {
   findMarksByGameIds
 } from "../repository/matches.repository";
 import { generateMatchComment } from "@/lib/services/openai.service";
+import { dispatchNotifications } from "@/features/notifications";
+import { findGroupById } from "@/features/groups/repository/groups.repository";
 
 export async function createMatch(groupId: number): Promise<number> {
   const session = await auth0.getSession();
@@ -92,13 +94,21 @@ export async function completeMatch(
       ? Math.floor((Date.now() - match.timerStartedAt.getTime()) / 1000)
       : 0;
 
+  const finalDuration = (match?.duration ?? 0) + segmentSeconds;
+
   await updateMatchStatus(matchId, {
     status: "done",
     finishedAt: new Date(),
-    duration: (match?.duration ?? 0) + segmentSeconds,
+    duration: finalDuration,
     timerStartedAt: null,
     comment: comment?.trim() || null,
   });
+
+  // Fire notifications (non-blocking)
+  if (match?.groupId) {
+    fireMatchNotifications(matchId, match.groupId, finalDuration, comment?.trim() || null)
+      .catch((err) => console.error('Notification dispatch error:', err));
+  }
 }
 
 export async function saveMatchComment(
@@ -179,4 +189,65 @@ export type MatchPlayer = {
 
 export async function getMatchPlayers(matchId: number): Promise<MatchPlayer[]> {
   return findMatchPlayers(matchId);
+}
+
+// ── Notification helper (private) ──────────────────────
+
+async function fireMatchNotifications(
+  matchId: number,
+  groupId: number,
+  duration: number,
+  comment: string | null,
+): Promise<void> {
+  const [group, matchPlayers, games] = await Promise.all([
+    findGroupById(groupId),
+    findMatchPlayers(matchId),
+    findGamesByMatchId(matchId),
+  ]);
+
+  if (!group) return;
+
+  const gameIds = games.map((g) => g.id);
+  const allScores = gameIds.length > 0 ? await findScoresByGameIds(gameIds) : [];
+
+  // Compute wins per player
+  const winsMap = new Map<number, { nickname: string; wins: number }>();
+  for (const p of matchPlayers) {
+    winsMap.set(p.id, { nickname: p.nickname, wins: 0 });
+  }
+
+  for (const game of games) {
+    const scores = allScores.filter((s) => s.gameId === game.id);
+    if (scores.length < 2) continue;
+    const maxScore = Math.max(...scores.map((s) => s.score));
+    const winners = scores.filter((s) => s.score === maxScore);
+    if (winners.length < scores.length) {
+      for (const w of winners) {
+        const entry = winsMap.get(w.playerId);
+        if (entry) entry.wins++;
+      }
+    }
+  }
+
+  const sorted = Array.from(winsMap.entries())
+    .map(([, { nickname, wins }]) => ({ playerName: nickname, wins }))
+    .sort((a, b) => b.wins - a.wins);
+
+  const hasWinner = sorted.length >= 2 && sorted[0].wins > sorted[1].wins && sorted[0].wins > 0;
+
+  const results = sorted.map((p, idx) => ({
+    playerName: p.playerName,
+    wins: p.wins,
+    isWinner: hasWinner && idx === 0,
+  }));
+
+  await dispatchNotifications(groupId, {
+    groupName: group.name,
+    matchId,
+    groupId,
+    results,
+    comment,
+    duration,
+    appBaseUrl: process.env.APP_BASE_URL,
+  });
 }

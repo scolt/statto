@@ -43,6 +43,13 @@
       "when": 1772100000000,
       "tag": "0005_sports",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1772200000000,
+      "tag": "0006_group_notifications",
+      "breakpoints": true
     }
   ]
 }

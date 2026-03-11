@@ -9,6 +9,7 @@ import { gamesTable } from './schemas/games';
 import { gameScoresTable } from './schemas/game-scores';
 import { marksTable } from './schemas/marks';
 import { gameMarksTable } from './schemas/game-marks';
+import { groupNotificationsTable } from './schemas/group-notifications';
 
 export {
   usersTable,
@@ -22,4 +23,5 @@ export {
   gameScoresTable,
   marksTable,
   gameMarksTable,
+  groupNotificationsTable,
 };

@@ -146,5 +146,26 @@
     "hours": "{hours}ч {minutes}м",
     "minutes": "{minutes}м",
     "lessThanMinute": "<1м"
+  },
+  "notifications": {
+    "title": "Уведомления",
+    "addChannel": "Добавить канал уведомлений",
+    "noChannels": "Каналы уведомлений не настроены",
+    "noChannelsHint": "Добавьте канал для автоматического получения результатов матчей.",
+    "enabled": "Включено",
+    "disabled": "Отключено",
+    "deleteConfirm": "Удалить этот канал уведомлений?",
+    "provider": {
+      "telegram": "Telegram"
+    },
+    "telegram": {
+      "chatId": "ID чата",
+      "chatIdPlaceholder": "напр. -1001234567890",
+      "chatIdRequired": "ID чата обязателен",
+      "instructions": "Добавьте бота Statto в вашу Telegram-группу, затем вставьте сюда ID чата группы."
+    },
+    "testSend": "Отправить тест",
+    "testSuccess": "Тестовое уведомление отправлено!",
+    "testFailed": "Не удалось отправить тестовое уведомление"
   }
 }

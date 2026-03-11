@@ -146,5 +146,26 @@
     "hours": "{hours}u {minutes}m",
     "minutes": "{minutes}m",
     "lessThanMinute": "<1m"
+  },
+  "notifications": {
+    "title": "Meldingen",
+    "addChannel": "Meldingskanaal toevoegen",
+    "noChannels": "Geen meldingskanalen geconfigureerd",
+    "noChannelsHint": "Voeg een kanaal toe om automatisch wedstrijdresultaten te ontvangen.",
+    "enabled": "Ingeschakeld",
+    "disabled": "Uitgeschakeld",
+    "deleteConfirm": "Dit meldingskanaal verwijderen?",
+    "provider": {
+      "telegram": "Telegram"
+    },
+    "telegram": {
+      "chatId": "Chat-ID",
+      "chatIdPlaceholder": "bijv. -1001234567890",
+      "chatIdRequired": "Chat-ID is verplicht",
+      "instructions": "Voeg de Statto-bot toe aan je Telegram-groep en plak hier het chat-ID van de groep."
+    },
+    "testSend": "Test versturen",
+    "testSuccess": "Testmelding verzonden!",
+    "testFailed": "Testmelding kon niet worden verzonden"
   }
 }
