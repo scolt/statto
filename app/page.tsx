@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { auth0 } from "@/lib/auth0";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
@@ -9,6 +10,23 @@ import {
 import { getPlayerDisplayName } from "@/features/players";
 import { Button } from "@/components/ui/button";
 import { User, LogOut, Zap } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Statto — Track Your Game Stats",
+  description:
+    "Track your stats, compete with friends, and settle the score once and for all. Leaderboards, live matches, and group stats for any sport.",
+  openGraph: {
+    title: "Statto — Track Your Game Stats",
+    description:
+      "Track your stats, compete with friends, and settle the score once and for all.",
+    url: "/",
+  },
+  twitter: {
+    title: "Statto — Track Your Game Stats",
+    description:
+      "Track your stats, compete with friends, and settle the score once and for all.",
+  },
+};
 
 export default async function Home() {
   const session = await auth0.getSession();

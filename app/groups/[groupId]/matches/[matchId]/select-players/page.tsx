@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { auth0 } from "@/lib/auth0";
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
@@ -10,6 +11,12 @@ import { PlayerSelector } from "@/features/matches/components/PlayerSelector";
 
 type Props = {
   params: Promise<{ groupId: string; matchId: string }>;
+};
+
+export const metadata: Metadata = {
+  title: "Select Players",
+  description: "Choose which players are participating in this match.",
+  robots: { index: false, follow: false },
 };
 
 export default async function SelectPlayersPage({ params }: Props) {

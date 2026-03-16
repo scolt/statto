@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { auth0 } from "@/lib/auth0";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -6,6 +7,12 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CreateGroupForm } from "@/features/groups";
 import { getSports } from "@/features/sports";
+
+export const metadata: Metadata = {
+  title: "Create Group",
+  description: "Create a new group to start tracking stats with your friends on Statto.",
+  robots: { index: false, follow: false },
+};
 
 export default async function CreateGroupPage() {
   const session = await auth0.getSession();

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { auth0 } from "@/lib/auth0";
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
@@ -11,6 +12,25 @@ import { getGroupNotifications, NotificationSettings } from "@/features/notifica
 type Props = {
   params: Promise<{ groupId: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { groupId } = await params;
+
+  let title = "Edit Group";
+  try {
+    const { getGroupById } = await import("@/features/groups");
+    const group = await getGroupById(Number(groupId));
+    if (group) title = `Edit ${group.name}`;
+  } catch {
+    // fall through
+  }
+
+  return {
+    title,
+    description: "Edit group settings, members, and notification preferences on Statto.",
+    robots: { index: false, follow: false },
+  };
+}
 
 export default async function EditGroupPage({ params }: Props) {
   const session = await auth0.getSession();

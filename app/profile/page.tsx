@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
@@ -10,6 +11,12 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { LocaleSwitcher } from "@/components/LocaleSwitcher";
 import { type Locale } from "@/i18n/config";
+
+export const metadata: Metadata = {
+  title: "Profile",
+  description: "Manage your Statto profile, display name, and account settings.",
+  robots: { index: false, follow: false },
+};
 
 export default async function ProfilePage() {
   const auth0User = await getCurrentUser();

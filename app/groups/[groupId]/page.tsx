@@ -10,10 +10,45 @@ import { StartMatchButton } from "@/features/matches/components/StartMatchButton
 import { MatchList } from "@/features/matches/components/MatchList";
 import { DeleteGroupButton } from "@/features/groups/components/DeleteGroupButton";
 import { StatsLeaderboard } from "@/features/groups/components/StatsLeaderboard";
+import type { Metadata } from "next";
 
 type Props = {
   params: Promise<{ groupId: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { groupId } = await params;
+
+  let title = "Group";
+  let description = "View group stats, leaderboard, and match history on Statto.";
+
+  try {
+    const group = await getGroupById(Number(groupId));
+    if (group) {
+      title = group.name;
+      description = group.description
+        ? `${group.description} — Track scores and stats on Statto.`
+        : `View leaderboard, match history and stats for ${group.name} on Statto.`;
+    }
+  } catch {
+    // fall through to defaults
+  }
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title: `${title} | Statto`,
+      description,
+      url: `/groups/${groupId}`,
+    },
+    twitter: {
+      title: `${title} | Statto`,
+      description,
+    },
+  };
+}
+
 
 export default async function GroupPage({ params }: Props) {
   const session = await auth0.getSession();
