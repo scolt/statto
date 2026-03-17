@@ -58,7 +58,45 @@
     "sport": "Sport",
     "players": "Spelers",
     "deleteGroup": "Groep verwijderen",
-    "deleteGroupConfirm": "Deze groep verwijderen? Alle wedstrijden en games worden permanent verwijderd."
+    "deleteGroupConfirm": "Deze groep verwijderen? Alle wedstrijden en games worden permanent verwijderd.",
+    "wrapup": {
+      "bannerReady": "{period}: Groepsoverzicht staat klaar.",
+      "open": "Openen",
+      "openViewer": "Open groepsoverzicht verhalen",
+      "storyTitle": "Groepsoverzicht",
+      "period": {
+        "quarter": "Kwartaalverhaal",
+        "year": "Jaarverhaal"
+      },
+      "close": "Sluiten",
+      "next": "Volgende",
+      "previous": "Vorige",
+      "pageIndicator": "{current}/{total}",
+      "noData": "Nog geen gegevens voor deze periode.",
+      "pages": {
+        "playerStats": {
+          "title": "Spelerstatistieken",
+          "totalMatches": "Wedstrijden in deze periode",
+          "heroChip": "Hot Streak",
+          "player": "Speler",
+          "matches": "Wedstrijden",
+          "games": "Games",
+          "wins": "Overwinningen"
+        },
+        "time": {
+          "title": "Tijdoverzicht",
+          "totalPlay": "Totale speeltijd",
+          "chipTotal": "Uithoudingsvermogen",
+          "avgGame": "Gemiddelde gameduur",
+          "avgMatch": "Gemiddelde wedstrijdduur"
+        },
+        "efficiency": {
+          "title": "Top 3 meest efficiente spelers",
+          "chipTop": "MVP-zone",
+          "meta": "{wins} overwinningen in {games} games ({percentile}e percentiel)"
+        }
+      }
+    }
   },
   "matches": {
     "title": "Wedstrijden",

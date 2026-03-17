@@ -4,12 +4,13 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { ArrowLeft, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { getGroupById } from "@/features/groups";
+import { getActiveGroupWrapup, getGroupById } from "@/features/groups";
 import { SportIcon } from "@/features/sports";
 import { StartMatchButton } from "@/features/matches/components/StartMatchButton";
 import { MatchList } from "@/features/matches/components/MatchList";
 import { DeleteGroupButton } from "@/features/groups/components/DeleteGroupButton";
 import { StatsLeaderboard } from "@/features/groups/components/StatsLeaderboard";
+import { GroupWrapupBanner } from "@/features/groups/components/GroupWrapupBanner";
 import type { Metadata } from "next";
 
 type Props = {
@@ -55,9 +56,10 @@ export default async function GroupPage({ params }: Props) {
   if (!session) redirect("/auth/login");
 
   const { groupId } = await params;
-  const [group, t] = await Promise.all([
+  const [group, t, wrapup] = await Promise.all([
     getGroupById(Number(groupId)),
     getTranslations(),
+    getActiveGroupWrapup(Number(groupId)),
   ]);
   if (!group) notFound();
 
@@ -100,6 +102,8 @@ export default async function GroupPage({ params }: Props) {
           <DeleteGroupButton groupId={group.id} />
         </div>
       </header>
+
+      <GroupWrapupBanner wrapup={wrapup} />
 
       <div className="mx-auto w-full max-w-2xl flex-1 px-4 py-6 sm:px-6 sm:py-8">
         {/* Description */}

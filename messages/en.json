@@ -58,7 +58,45 @@
     "sport": "Sport",
     "players": "Players",
     "deleteGroup": "Delete group",
-    "deleteGroupConfirm": "Delete this group? All matches and games will be permanently deleted."
+    "deleteGroupConfirm": "Delete this group? All matches and games will be permanently deleted.",
+    "wrapup": {
+      "bannerReady": "{period}: Group wrap-up is ready.",
+      "open": "Open",
+      "openViewer": "Open group wrap-up stories",
+      "storyTitle": "Group Wrap-up",
+      "period": {
+        "quarter": "Quarter Story",
+        "year": "Year Story"
+      },
+      "close": "Close",
+      "next": "Next",
+      "previous": "Previous",
+      "pageIndicator": "{current}/{total}",
+      "noData": "No data for this period yet.",
+      "pages": {
+        "playerStats": {
+          "title": "Player Stats",
+          "totalMatches": "Matches in this period",
+          "heroChip": "Hot Streak",
+          "player": "Player",
+          "matches": "Matches",
+          "games": "Games",
+          "wins": "Wins"
+        },
+        "time": {
+          "title": "Time Overview",
+          "totalPlay": "Total Play Time",
+          "chipTotal": "Endurance",
+          "avgGame": "Average Game Duration",
+          "avgMatch": "Average Match Duration"
+        },
+        "efficiency": {
+          "title": "Top 3 Most Efficient Players",
+          "chipTop": "MVP Zone",
+          "meta": "{wins} wins in {games} games ({percentile}th percentile)"
+        }
+      }
+    }
   },
   "matches": {
     "title": "Matches",

@@ -11,3 +11,10 @@ export type { MatchDetail, MatchStatus, GameWithDetails } from "./queries/get-ma
 
 export { getMatchesForGroup } from "./queries/get-matches-for-group";
 export type { MatchListItem, PlayerMatchResult } from "./queries/get-matches-for-group";
+
+export { getGroupPeriodWrapupStats } from "./queries/get-group-period-wrapup-stats";
+export type {
+	GroupPeriodWrapupStats,
+	PeriodPlayerGames,
+	PeriodPlayerWins,
+} from "./queries/get-group-period-wrapup-stats";
