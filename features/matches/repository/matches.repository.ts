@@ -290,6 +290,18 @@ export async function deleteGameById(gameId: number): Promise<void> {
   await db.delete(gamesTable).where(eq(gamesTable.id, gameId));
 }
 
+export async function updateGameComment(gameId: number, comment: string | null): Promise<void> {
+  await db.update(gamesTable).set({ comment }).where(eq(gamesTable.id, gameId));
+}
+
+export async function deleteGameScoresByGameId(gameId: number): Promise<void> {
+  await db.delete(gameScoresTable).where(eq(gameScoresTable.gameId, gameId));
+}
+
+export async function deleteGameMarksByGameId(gameId: number): Promise<void> {
+  await db.delete(gameMarksTable).where(eq(gameMarksTable.gameId, gameId));
+}
+
 export async function findAllMarks() {
   return db
     .select({

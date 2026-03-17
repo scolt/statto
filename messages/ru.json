@@ -148,6 +148,7 @@
     "marks": "Отметки",
     "comment": "Комментарий (необязательно)",
     "commentPlaceholder": "Заметки об этой игре…",
+    "editGame": "Редактировать игру",
     "deleteGame": "Удалить игру",
     "deleteGameConfirm": "Удалить эту игру?"
   },

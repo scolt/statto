@@ -118,6 +118,10 @@ export function MatchPageClient({
   const timerVisible =
     optimisticTimer.status === "in_progress" || optimisticTimer.status === "paused";
 
+  const isMatchActive =
+    optimisticTimer.status === "in_progress" || optimisticTimer.status === "paused";
+  const canEdit = isParticipant && isMatchActive;
+
   return (
     <>
       {/* Timer — fully optimistic, controls only for participants */}
@@ -161,7 +165,7 @@ export function MatchPageClient({
         <h2 className="mb-3 text-lg font-semibold">
           Games ({optimisticGames.length})
         </h2>
-        <GameList games={optimisticGames} canDelete={isParticipant} />
+        <GameList games={optimisticGames} canDelete={isParticipant} canEdit={canEdit} marks={marks} />
       </section>
     </>
   );

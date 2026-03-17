@@ -6,15 +6,18 @@ import { Trash2, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { deleteGame } from "@/features/matches";
-import type { GameWithDetails } from "@/features/matches";
+import type { GameWithDetails, Mark } from "@/features/matches";
+import { EditGameButton } from "./EditGameButton";
 
 type Props = {
   game: GameWithDetails;
   index: number;
   canDelete: boolean;
+  canEdit: boolean;
+  marks: Mark[];
 };
 
-function DuelGameRow({ game, index, canDelete }: Props) {
+function DuelGameRow({ game, index, canDelete, canEdit, marks }: Props) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [a, b] = game.scores;
@@ -90,12 +93,13 @@ function DuelGameRow({ game, index, canDelete }: Props) {
           </span>
         </div>
 
-        {/* Delete button — visible on hover / always on touch, only for participants */}
+        {/* Edit / Delete buttons — visible on hover, only for active participants */}
+        {canEdit && <EditGameButton game={game} marks={marks} />}
         {canDelete && (
           <Button
             variant="ghost"
             size="icon"
-            className="ml-1.5 size-7 shrink-0 opacity-50 transition-opacity hover:opacity-100 group-hover:opacity-100 text-destructive hover:text-destructive"
+            className="ml-1 size-7 shrink-0 opacity-50 transition-opacity hover:opacity-100 group-hover:opacity-100 text-destructive hover:text-destructive"
             onClick={handleDelete}
             disabled={isPending}
             aria-label="Remove game"
@@ -140,7 +144,7 @@ function DuelGameRow({ game, index, canDelete }: Props) {
   );
 }
 
-function MultiPlayerGameRow({ game, index, canDelete }: Props) {
+function MultiPlayerGameRow({ game, index, canDelete, canEdit, marks }: Props) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -215,7 +219,8 @@ function MultiPlayerGameRow({ game, index, canDelete }: Props) {
           </div>
         )}
 
-        {/* Delete button */}
+        {/* Edit / Delete buttons */}
+        {canEdit && <EditGameButton game={game} marks={marks} />}
         {canDelete && (
           <Button
             variant="ghost"

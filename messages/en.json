@@ -148,6 +148,7 @@
     "marks": "Marks",
     "comment": "Comment (optional)",
     "commentPlaceholder": "Any notes about this game…",
+    "editGame": "Edit Game",
     "deleteGame": "Delete game",
     "deleteGameConfirm": "Delete this game?"
   },

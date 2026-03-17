@@ -148,6 +148,7 @@
     "marks": "Markeringen",
     "comment": "Opmerking (optioneel)",
     "commentPlaceholder": "Notities over deze game…",
+    "editGame": "Game bewerken",
     "deleteGame": "Game verwijderen",
     "deleteGameConfirm": "Deze game verwijderen?"
   },

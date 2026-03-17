@@ -1,8 +1,8 @@
 export { createMatch, addPlayersToMatch, getMatchPlayers, startMatch, pauseMatch, resumeMatch, completeMatch, uncompleteMatch, saveMatchComment, generateAIMatchComment } from "./actions/match-actions";
 export type { MatchPlayer } from "./actions/match-actions";
 
-export { reportGame, getAllMarks, deleteGame } from "./actions/game-actions";
-export type { Mark, ReportGameInput } from "./actions/game-actions";
+export { reportGame, getAllMarks, deleteGame, updateGame } from "./actions/game-actions";
+export type { Mark, ReportGameInput, UpdateGameInput } from "./actions/game-actions";
 
 export { deleteMatch } from "./actions/delete-match";
 

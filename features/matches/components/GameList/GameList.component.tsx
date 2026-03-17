@@ -1,15 +1,17 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import type { GameWithDetails } from "@/features/matches";
+import type { GameWithDetails, Mark } from "@/features/matches";
 import { GameRow } from "./GameRow";
 
 type Props = {
   games: GameWithDetails[];
   canDelete: boolean;
+  canEdit: boolean;
+  marks: Mark[];
 };
 
-export function GameList({ games, canDelete }: Props) {
+export function GameList({ games, canDelete, canEdit, marks }: Props) {
   const t = useTranslations();
 
   if (games.length === 0) {
@@ -36,6 +38,8 @@ export function GameList({ games, canDelete }: Props) {
           game={game}
           index={games.length - index}
           canDelete={canDelete}
+          canEdit={canEdit}
+          marks={marks}
         />
       ))}
     </div>
