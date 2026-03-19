@@ -2,12 +2,18 @@ import { Auth0Client } from "@auth0/nextjs-auth0/server";
 import { NextResponse } from "next/server";
 import { ensureUserAndPlayer } from "@/lib/auth/user-management";
 
+const SESSION_DURATION_IN_SECONDS = 60 * 60 * 24 * 90;
+
 /**
  * Auth0 client for server components
  * Configuration is read from environment variables:
  * AUTH0_SECRET, AUTH0_BASE_URL, AUTH0_ISSUER_BASE_URL, AUTH0_CLIENT_ID, AUTH0_CLIENT_SECRET
  */
 export const auth0 = new Auth0Client({
+  session: {
+    absoluteDuration: SESSION_DURATION_IN_SECONDS,
+    inactivityDuration: SESSION_DURATION_IN_SECONDS,
+  },
   async onCallback(error, ctx, session) {
     if (error) {
       console.error("Auth0 callback error:", error);
