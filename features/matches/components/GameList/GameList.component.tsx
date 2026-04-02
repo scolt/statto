@@ -27,12 +27,9 @@ export function GameList({ games, canDelete, canEdit, marks }: Props) {
     );
   }
 
-  // Show newest game first — reverse a copy so original order is preserved
-  const reversed = [...games].reverse();
-
   return (
     <div className="space-y-2">
-      {reversed.map((game, index) => (
+      {games.map((game, index) => (
         <GameRow
           key={game.id}
           game={game}

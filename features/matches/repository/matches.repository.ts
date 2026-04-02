@@ -164,7 +164,7 @@ export async function findGamesByMatchId(matchId: number) {
     })
     .from(gamesTable)
     .where(eq(gamesTable.matchId, matchId))
-    .orderBy(gamesTable.createdAt);
+    .orderBy(desc(gamesTable.createdAt));
 }
 
 export async function findScoresByGameIds(gameIds: number[]) {
