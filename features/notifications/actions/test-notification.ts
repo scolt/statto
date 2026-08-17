@@ -38,13 +38,12 @@ export async function testNotification(notificationId: number): Promise<TestNoti
       matchId: 0,
       groupId: notification.groupId,
       results: [
-        { playerName: 'Alice', wins: 3, isWinner: true },
-        { playerName: 'Bob', wins: 2, isWinner: false },
-        { playerName: 'Charlie', wins: 1, isWinner: false },
+        { playerName: 'Tony', wins: 5, isWinner: true },
+        { playerName: 'Ulad', wins: 6, isWinner: false },
       ],
-      comment: 'This is a test notification from Statto! 🎉',
+      comment: 'Победитель Влад Демонический',
       duration: 4980,
-      appBaseUrl: process.env.APP_BASE_URL,
+      appBaseUrl: 'https://statto-three.vercel.app//groups/4/matches/72',
     });
     return { success: true };
   } catch (err) {

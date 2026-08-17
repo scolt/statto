@@ -57,6 +57,7 @@ async function callTelegramApi(
   }
 
   const rawText = await response.text();
+  console.log('Telegram API response', rawText);
   let parsed: TelegramApiResponse | undefined;
   try {
     parsed = rawText ? (JSON.parse(rawText) as TelegramApiResponse) : undefined;
