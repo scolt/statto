@@ -58,7 +58,20 @@ function formatMatchResult(payload: NotificationPayload): string {
 export const telegramProvider: NotificationSender = {
   async send(config: Record<string, unknown>, payload: NotificationPayload): Promise<void> {
     const { chatId } = config as TelegramNotificationConfig;
+
+    if (!chatId) {
+      console.error(
+        `[telegram.provider] matchId=${payload.matchId} groupId=${payload.groupId} — missing chatId in config:`,
+        config,
+      );
+      throw new Error('Telegram notification config is missing chatId');
+    }
+
     const message = formatMatchResult(payload);
+    console.log(
+      `[telegram.provider] matchId=${payload.matchId} groupId=${payload.groupId} chatId=${chatId} — sending message ` +
+        `(${message.length} chars)`,
+    );
     await sendTelegramMessage(chatId, message, 'HTML');
   },
 };

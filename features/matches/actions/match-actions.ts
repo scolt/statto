@@ -106,8 +106,15 @@ export async function completeMatch(
 
   // Fire notifications (non-blocking)
   if (match?.groupId) {
+    console.log(
+      `[completeMatch] matchId=${matchId} groupId=${match.groupId} duration=${finalDuration} — dispatching notifications`,
+    );
     fireMatchNotifications(matchId, match.groupId, finalDuration, comment?.trim() || null)
-      .catch((err) => console.error('Notification dispatch error:', err));
+      .catch((err) =>
+        console.error(`[completeMatch] matchId=${matchId} groupId=${match.groupId} notification dispatch error:`, err),
+      );
+  } else {
+    console.warn(`[completeMatch] matchId=${matchId} has no groupId — skipping notification dispatch`);
   }
 }
 
@@ -199,16 +206,39 @@ async function fireMatchNotifications(
   duration: number,
   comment: string | null,
 ): Promise<void> {
+  console.log(`[fireMatchNotifications] matchId=${matchId} groupId=${groupId} — collecting data`);
+
   const [group, matchPlayers, games] = await Promise.all([
     findGroupById(groupId),
     findMatchPlayers(matchId),
     findGamesByMatchId(matchId),
   ]);
 
-  if (!group) return;
+  console.log(
+    `[fireMatchNotifications] matchId=${matchId} groupId=${groupId} — group=${group ? group.name : 'null'} ` +
+      `matchPlayers=${matchPlayers.length} games=${games.length}`,
+  );
+
+  if (!group) {
+    console.error(
+      `[fireMatchNotifications] matchId=${matchId} groupId=${groupId} — group not found, aborting notification dispatch`,
+    );
+    return;
+  }
+
+  if (matchPlayers.length === 0) {
+    console.warn(`[fireMatchNotifications] matchId=${matchId} groupId=${groupId} — no match players found`);
+  }
+  if (games.length === 0) {
+    console.warn(`[fireMatchNotifications] matchId=${matchId} groupId=${groupId} — no games found`);
+  }
 
   const gameIds = games.map((g) => g.id);
   const allScores = gameIds.length > 0 ? await findScoresByGameIds(gameIds) : [];
+
+  console.log(
+    `[fireMatchNotifications] matchId=${matchId} groupId=${groupId} — gameIds=${gameIds.length} scores=${allScores.length}`,
+  );
 
   // Compute wins per player
   const winsMap = new Map<number, { nickname: string; wins: number }>();
@@ -241,13 +271,24 @@ async function fireMatchNotifications(
     isWinner: hasWinner && idx === 0,
   }));
 
-  await dispatchNotifications(groupId, {
-    groupName: group.name,
-    matchId,
-    groupId,
-    results,
-    comment,
-    duration,
-    appBaseUrl: process.env.APP_BASE_URL,
-  });
+  console.log(
+    `[fireMatchNotifications] matchId=${matchId} groupId=${groupId} — results=${JSON.stringify(results)} ` +
+      `hasWinner=${hasWinner}`,
+  );
+
+  try {
+    await dispatchNotifications(groupId, {
+      groupName: group.name,
+      matchId,
+      groupId,
+      results,
+      comment,
+      duration,
+      appBaseUrl: process.env.APP_BASE_URL,
+    });
+    console.log(`[fireMatchNotifications] matchId=${matchId} groupId=${groupId} — dispatchNotifications completed`);
+  } catch (err) {
+    console.error(`[fireMatchNotifications] matchId=${matchId} groupId=${groupId} — dispatchNotifications threw:`, err);
+    throw err;
+  }
 }

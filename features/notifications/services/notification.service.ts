@@ -15,8 +15,21 @@ export async function dispatchNotifications(
   groupId: number,
   payload: NotificationPayload,
 ): Promise<void> {
+  console.log(`[dispatchNotifications] groupId=${groupId} matchId=${payload.matchId} — looking up enabled notifications`);
+
   const notifications = await findEnabledNotificationsByGroupId(groupId);
-  if (notifications.length === 0) return;
+
+  console.log(
+    `[dispatchNotifications] groupId=${groupId} matchId=${payload.matchId} — found ${notifications.length} enabled ` +
+      `notification(s): ${notifications.map((n) => `${n.id}:${n.provider}`).join(', ') || 'none'}`,
+  );
+
+  if (notifications.length === 0) {
+    console.warn(
+      `[dispatchNotifications] groupId=${groupId} matchId=${payload.matchId} — no enabled notifications configured, nothing will be sent`,
+    );
+    return;
+  }
 
   const results = await Promise.allSettled(
     notifications.map((n) => {
@@ -30,7 +43,16 @@ export async function dispatchNotifications(
 
   results.forEach((r, i) => {
     if (r.status === 'rejected') {
-      console.error(`Notification ${notifications[i].id} (${notifications[i].provider}) failed:`, r.reason);
+      console.error(
+        `[dispatchNotifications] groupId=${groupId} matchId=${payload.matchId} — notification ${notifications[i].id} ` +
+          `(${notifications[i].provider}) failed:`,
+        r.reason,
+      );
+    } else {
+      console.log(
+        `[dispatchNotifications] groupId=${groupId} matchId=${payload.matchId} — notification ${notifications[i].id} ` +
+          `(${notifications[i].provider}) sent successfully`,
+      );
     }
   });
 }
